@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental – Marketing de Serviços, Produtos e Preços</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0D1117;
+    --bg2: #161B22;
+    --card: #1C2333;
+    --border: #30363D;
+    --text: #E6EDF3;
+    --text2: #8B949E;
+    --accent1: #FF6B6B;
+    --accent2: #4ECDC4;
+    --accent3: #FFE66D;
+    --accent4: #A78BFA;
+    --accent5: #F472B6;
+    --accent6: #38BDF8;
+    --glow1: rgba(255,107,107,0.15);
+    --glow2: rgba(78,205,196,0.15);
+    --glow3: rgba(255,230,109,0.15);
+    --glow4: rgba(167,139,250,0.15);
+    --glow5: rgba(244,114,182,0.15);
+    --glow6: rgba(56,189,248,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 40px 20px 20px;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,107,107,0.08) 0%, rgba(78,205,196,0.05) 40%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent1), var(--accent3), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .hero .sub {
+    font-size: 0.95rem;
+    color: var(--text2);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  .nav-pills {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-pill {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--bg2);
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .nav-pill:hover, .nav-pill.active {
+    border-color: var(--accent);
+    color: var(--text);
+    background: var(--glow);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px var(--glow);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .section {
+    display: none;
+    animation: fadeUp 0.5s ease;
+  }
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .section-header p {
+    font-size: 0.85rem;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .grid-5 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card p, .card li {
+    font-size: 0.83rem;
+    color: var(--text2);
+    line-height: 1.55;
+  }
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .card ul li {
+    padding: 4px 0 4px 16px;
+    position: relative;
+  }
+  .card ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+
+  /* COLOR THEMES per section */
+  [data-theme="red"] { --accent: var(--accent1); --glow: var(--glow1); }
+  [data-theme="teal"] { --accent: var(--accent2); --glow: var(--glow2); }
+  [data-theme="yellow"] { --accent: var(--accent3); --glow: var(--glow3); }
+  [data-theme="purple"] { --accent: var(--accent4); --glow: var(--glow4); }
+  [data-theme="pink"] { --accent: var(--accent5); --glow: var(--glow5); }
+  [data-theme="blue"] { --accent: var(--accent6); --glow: var(--glow6); }
+
+  .accent { color: var(--accent); }
+  .card::before { background: var(--accent); }
+  .card ul li::before { color: var(--accent); }
+  .section-icon { background: var(--glow); color: var(--accent); }
+
+  /* SPECIAL: Levels pyramid */
+  .pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 16px 0;
+  }
+  .pyramid-level {
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--bg);
+    transition: transform 0.2s;
+  }
+  .pyramid-level:hover { transform: scale(1.05); }
+  .pyramid-level .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    opacity: 0.7;
+  }
+
+  /* BCG Matrix */
+  .bcg-matrix {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px;
+    max-width: 400px;
+    margin: 12px auto;
+  }
+  .bcg-cell {
+    padding: 16px 12px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.82rem;
+    position: relative;
+  }
+  .bcg-cell .emoji { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+  .bcg-cell .desc {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
+  }
+  .bcg-label {
+    font-size: 0.65rem;
+    color: var(--text2);
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .bcg-ylabel {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    font-size: 0.65rem;
+    color: var(--text2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bcg-wrapper {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    grid-template-rows: 1fr auto;
+    gap: 6px;
+    max-width: 440px;
+    margin: 12px auto;
+  }
+
+  /* CVP Chart */
+  .cvp-chart {
+    position: relative;
+    height: 180px;
+    margin: 20px 0 10px;
+    border-left: 2px solid var(--border);
+    border-bottom: 2px solid var(--border);
+    border-radius: 0 0 0 6px;
+  }
+  .cvp-curve {
+    position: absolute;
+    bottom: 0; left: 0; right: 0; top: 0;
+  }
+  .cvp-labels {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 8px;
+  }
+  .cvp-label {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .cvp-label .phase { color: var(--accent); }
+
+  /* Macro/Micro diagram */
+  .env-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .env-ring {
+    border: 2px dashed;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: transform 0.3s;
+  }
+  .env-ring:hover { transform: scale(1.05); }
+
+  /* Overview central map */
+  .overview-map {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 30px 0;
+  }
+  .central-node {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--accent1), var(--accent3));
+    color: var(--bg);
+    box-shadow: 0 0 60px rgba(255,107,107,0.2), 0 0 120px rgba(78,205,196,0.1);
+    position: relative;
+    z-index: 2;
+  }
+  .central-node .small {
+    font-size: 0.65rem;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+  .branches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    width: 100%;
+  }
+  .branch-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .branch-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+  .branch-card::after {
+    content: '→';
+    position: absolute;
+    bottom: 10px;
+    right: 14px;
+    font-size: 0.8rem;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+  }
+  .branch-card:hover::after { opacity: 0.8; }
+  .branch-icon { font-size: 2rem; margin-bottom: 8px; }
+  .branch-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  .branch-card p {
+    font-size: 0.75rem;
+    color: var(--text2);
+  }
+  .branch-card .topics {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  /* VRIO table */
+  .vrio-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    font-size: 0.78rem;
+    margin-top: 10px;
+  }
+  .vrio-table th {
+    padding: 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .vrio-table td {
+    padding: 8px 10px;
+    background: var(--bg2);
+    text-align: center;
+  }
+  .vrio-table tr td:first-child {
+    border-radius: 8px 0 0 8px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .vrio-table tr td:last-child { border-radius: 0 8px 8px 0; }
+
+  /* Innovation stages */
+  .stages-flow {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 10px 0;
+    margin-top: 10px;
+  }
+  .stage-item {
+    min-width: 100px;
+    padding: 12px 8px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .stage-item .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Brand loyalty ladder */
+  .loyalty-ladder {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .loyalty-step {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .loyalty-step .level-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    min-width: 28px;
+    text-align: center;
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  .highlight-box {
+    background: var(--glow);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 10px 10px 0;
+    margin: 10px 0;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .duo-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .duo-box {
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+  }
+  .duo-box h4 {
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+  }
+
+  .footer-note {
+    text-align: center;
+    padding: 30px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.6rem; }
+    .grid-2, .grid-3, .grid-5 { grid-template-columns: 1fr; }
+    .branches { grid-template-columns: 1fr; }
+    .duo-split { grid-template-columns: 1fr; }
+    .stages-flow { flex-wrap: wrap; }
+    .bcg-matrix { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Marketing de Serviços, Produtos e Preços</h1>
+  <p class="sub">Mapa Mental Completo — Prof. Rodrigo Cassimiro de Freitas · PUC Minas</p>
+</div>
+
+<nav class="nav-pills" id="nav">
+  <button class="nav-pill active" data-target="overview" data-theme="red" style="--accent:var(--accent1);--glow:var(--glow1)">🗺️ Visão Geral</button>
+  <button class="nav-pill" data-target="conceitos" data-theme="red" style="--accent:var(--accent1);--glow:var(--glow1)">📚 Conceitos Básicos</button>
+  <button class="nav-pill" data-target="produto" data-theme="teal" style="--accent:var(--accent2);--glow:var(--glow2)">📦 Gestão do Produto</button>
+  <button class="nav-pill" data-target="diferenciacao" data-theme="yellow" style="--accent:var(--accent3);--glow:var(--glow3)">🎯 Diferenciação & Linhas</button>
+  <button class="nav-pill" data-target="inovacao" data-theme="purple" style="--accent:var(--accent4);--glow:var(--glow4)">🚀 Inovação & CVP</button>
+  <button class="nav-pill" data-target="marca" data-theme="pink" style="--accent:var(--accent5);--glow:var(--glow5)">💎 Marcas</button>
+</nav>
+
+<div class="container">
+
+  <!-- ========== OVERVIEW ========== -->
+  <section class="section active" id="overview" data-theme="red">
+    <div class="overview-map">
+      <div class="central-node">
+        MSPP<br>Marketing
+        <span class="small">Serviços, Produtos & Preços</span>
+      </div>
+      <div class="branches">
+        <div class="branch-card" onclick="goTo('conceitos')" style="border-color: var(--accent1);">
+          <div class="branch-icon">📚</div>
+          <h3 style="color:var(--accent1)">Unidade 0 — Conceitos Básicos</h3>
+          <p>Fundamentos, mercado, funções mercadológicas, ambientes de marketing</p>
+          <div class="topics">
+            <span class="tag" style="background:var(--glow1);color:var(--accent1)">Micro</span>
+            <span class="tag" style="background:var(--glow1);color:var(--accent1)">Macro</span>
+            <span class="tag" style="background:var(--glow1);color:var(--accent1)">6 Ambientes</span>
+          </div>
+        </div>
+        <div class="branch-card" onclick="goTo('produto')" style="border-color: var(--accent2);">
+          <div class="branch-icon">📦</div>
+          <h3 style="color:var(--accent2)">Unidade I — Gestão do Produto</h3>
+          <p>Concepção, classificação, níveis de produto, estratégias</p>
+          <div class="topics">
+            <span class="tag" style="background:var(--glow2);color:var(--accent2)">5 Níveis</span>
+            <span class="tag" style="background:var(--glow2);color:var(--accent2)">Classificação</span>
+            <span class="tag" style="background:var(--glow2);color:var(--accent2)">6 Fases</span>
+          </div>
+        </div>
+        <div class="branch-card" onclick="goTo('diferenciacao')" style="border-color: var(--accent3);">
+          <div class="branch-icon">🎯</div>
+          <h3 style="color:var(--accent3)">Unidade I — Diferenciação & Linhas</h3>
+          <p>Diferenciação, VRIO, extensão, modernização e promoção de linhas</p>
+          <div class="topics">
+            <span class="tag" style="background:var(--glow3);color:var(--accent3)">VRIO</span>
+            <span class="tag" style="background:var(--glow3);color:var(--accent3)">Ampliação</span>
+            <span class="tag" style="background:var(--glow3);color:var(--accent3)">SWOT</span>
+          </div>
+        </div>
+        <div class="branch-card" onclick="goTo('inovacao')" style="border-color: var(--accent4);">
+          <div class="branch-icon">🚀</div>
+          <h3 style="color:var(--accent4)">Unidade I — Inovação & CVP</h3>
+          <p>Inovação, ciclo de vida do produto, Matriz BCG</p>
+          <div class="topics">
+            <span class="tag" style="background:var(--glow4);color:var(--accent4)">BCG</span>
+            <span class="tag" style="background:var(--glow4);color:var(--accent4)">CVP</span>
+            <span class="tag" style="background:var(--glow4);color:var(--accent4)">Disruptiva</span>
+          </div>
+        </div>
+        <div class="branch-card" onclick="goTo('marca')" style="border-color: var(--accent5);">
+          <div class="branch-icon">💎</div>
+          <h3 style="color:var(--accent5)">Unidade II — Marcas</h3>
+          <p>Conceito, natureza, dimensões, decisões e estratégias de marca</p>
+          <div class="topics">
+            <span class="tag" style="background:var(--glow5);color:var(--accent5)">Brand Equity</span>
+            <span class="tag" style="background:var(--glow5);color:var(--accent5)">Fidelidade</span>
+            <span class="tag" style="background:var(--glow5);color:var(--accent5)">Estratégias</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONCEITOS BASICOS ========== -->
+  <section class="section" id="conceitos" data-theme="red">
+    <div class="section-header">
+      <div class="section-icon">📚</div>
+      <div>
+        <h2>Unidade 0 — Conceitos Básicos de Marketing</h2>
+        <p>Fundamentos, ambientes e funções mercadológicas</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3><span class="accent">✦</span> O que é Marketing?</h3>
+        <div class="highlight-box">
+          "Ciência e arte de explorar, criar e entregar valor para satisfazer necessidades de um mercado-alvo com lucro." — Kotler
+        </div>
+        <p>Disciplina aplicada das ciências gerenciais que estuda as relações no ambiente mercadológico (ambiência interna e externa). Foco: <strong style="color:var(--accent1)">surpreender o cliente</strong>.</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> O que é o Mercado?</h3>
+        <p>Espaço de negociações entre <strong>ofertadores</strong> e <strong>consumidores</strong>, com troca de produtos que atendam às necessidades mercadológicas. Os produtos podem ser:</p>
+        <ul>
+          <li><strong>Bens</strong> (tangíveis)</li>
+          <li><strong>Serviços</strong> (intangíveis)</li>
+          <li><strong>Misturas</strong> de bens e serviços</li>
+        </ul>
+      </div>
+
+      <div class="card full-width">
+        <h3><span class="accent">✦</span> Funções Mercadológicas</h3>
+        <div class="grid grid-3" style="margin-top:10px">
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Produto</strong><br>Desenvolvimento e gerenciamento de produto</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Preço</strong><br>Estratégias de precificação</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Distribuição</strong><br>Localização e conveniências</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Comunicação</strong><br>CIM — Comunicação Integrada de Marketing</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Vendas</strong><br>Fortalecimento da força de vendas</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Estratégia</strong><br>Planos de Marketing e segmentação</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Marcas</strong><br>Desenvolvimento de marcas</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Conexão</strong><br>Canais de conexão com clientes</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px">
+            <p><strong style="color:var(--accent1)">Crescimento</strong><br>Performance mercadológica a longo prazo</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ambientes Diagram -->
+      <div class="card full-width">
+        <h3><span class="accent">✦</span> Ambientes de Marketing — Diagrama</h3>
+        <div style="display:flex;justify-content:center;margin:20px 0">
+          <svg viewBox="0 0 700 380" width="100%" style="max-width:700px">
+            <!-- Macro ring -->
+            <ellipse cx="350" cy="190" rx="330" ry="175" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
+            <text x="350" y="28" text-anchor="middle" fill="#FF6B6B" font-size="12" font-weight="700" font-family="Source Sans 3">MACROAMBIENTE (Ambiente Geral) — Incontrolável</text>
+            <!-- macro items -->
+            <g font-size="9.5" fill="#E6EDF3" font-family="Source Sans 3" font-weight="600">
+              <rect x="20" y="60" width="110" height="48" rx="8" fill="#2a1520" stroke="#FF6B6B" stroke-width="1"/>
+              <text x="75" y="80" text-anchor="middle" fill="#FF6B6B">Demográfico</text>
+              <text x="75" y="94" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">População, etnia,</text>
+              <text x="75" y="103" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">migração, família</text>
+
+              <rect x="570" y="60" width="110" height="48" rx="8" fill="#1a2520" stroke="#4ECDC4" stroke-width="1"/>
+              <text x="625" y="80" text-anchor="middle" fill="#4ECDC4">Econômico</text>
+              <text x="625" y="94" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Renda, crédito,</text>
+              <text x="625" y="103" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">zonas de comércio</text>
+
+              <rect x="5" y="260" width="110" height="48" rx="8" fill="#1a1a25" stroke="#A78BFA" stroke-width="1"/>
+              <text x="60" y="280" text-anchor="middle" fill="#A78BFA">Sócio-Cultural</text>
+              <text x="60" y="294" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Valores, crenças,</text>
+              <text x="60" y="303" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">arte, religião</text>
+
+              <rect x="585" y="260" width="110" height="48" rx="8" fill="#251a20" stroke="#F472B6" stroke-width="1"/>
+              <text x="640" y="280" text-anchor="middle" fill="#F472B6">Natural</text>
+              <text x="640" y="294" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Recursos, energia,</text>
+              <text x="640" y="303" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">poluição, regulação</text>
+
+              <rect x="120" y="330" width="110" height="42" rx="8" fill="#252520" stroke="#FFE66D" stroke-width="1"/>
+              <text x="175" y="350" text-anchor="middle" fill="#FFE66D">Tecnológico</text>
+              <text x="175" y="364" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Inovação, P&D, patentes</text>
+
+              <rect x="470" y="330" width="110" height="42" rx="8" fill="#1a2025" stroke="#38BDF8" stroke-width="1"/>
+              <text x="525" y="350" text-anchor="middle" fill="#38BDF8">Político-Legal</text>
+              <text x="525" y="364" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Leis, CDC, agências</text>
+            </g>
+
+            <!-- Micro ring -->
+            <ellipse cx="350" cy="185" rx="190" ry="120" fill="none" stroke="#4ECDC4" stroke-width="2" opacity="0.5"/>
+            <text x="350" y="90" text-anchor="middle" fill="#4ECDC4" font-size="11" font-weight="700" font-family="Source Sans 3">MICROAMBIENTE (Ambiente de Tarefa) — Gerenciável</text>
+
+            <g font-size="9" fill="#E6EDF3" font-family="Source Sans 3">
+              <rect x="195" y="110" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
+              <text x="240" y="130" text-anchor="middle" fill="#4ECDC4" font-weight="600">Fornecedores</text>
+
+              <rect x="415" y="110" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
+              <text x="460" y="130" text-anchor="middle" fill="#4ECDC4" font-weight="600">Concorrência</text>
+
+              <rect x="175" y="220" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
+              <text x="220" y="240" text-anchor="middle" fill="#4ECDC4" font-weight="600">Distribuidores</text>
+
+              <rect x="435" y="220" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
+              <text x="480" y="240" text-anchor="middle" fill="#4ECDC4" font-weight="600">Clientes-alvo</text>
+
+              <rect x="290" y="255" width="120" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
+              <text x="350" y="275" text-anchor="middle" fill="#4ECDC4" font-weight="600">Parceiros Estratégicos</text>
+            </g>
+
+            <!-- Centro: Empresa -->
+            <circle cx="350" cy="180" r="38" fill="#1a2a2a" stroke="#4ECDC4" stroke-width="2"/>
+            <text x="350" y="176" text-anchor="middle" fill="#4ECDC4" font-size="11" font-weight="700" font-family="Source Sans 3">EMPRESA</text>
+            <text x="350" y="192" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">(departamentos)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== GESTÃO DO PRODUTO ========== -->
+  <section class="section" id="produto" data-theme="teal">
+    <div class="section-header">
+      <div class="section-icon">📦</div>
+      <div>
+        <h2>Gestão do Produto — Concepção, Classificação e Estratégia</h2>
+        <p>Níveis, categorias e processo de desenvolvimento</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3><span class="accent">✦</span> Concepção do Produto</h3>
+        <p>Aquilo que pode ser comercializado a partir de uma ideia inovadora (espontânea ou por P&D) com intenção de gerar riquezas. O produto é o <strong style="color:var(--accent2)">1º e mais importante elemento do mix de marketing</strong>.</p>
+        <p style="margin-top:8px"><strong>Categorias de Produtos:</strong></p>
+        <ul>
+          <li>Bens Físicos (automóveis, computadores)</li>
+          <li>Serviços (educação, condomínios)</li>
+          <li>Pessoas (celebridades, atletas)</li>
+          <li>Locais (Paris, Rio de Janeiro)</li>
+          <li>Eventos (Olimpíadas, Copa do Mundo)</li>
+          <li>Ideias (voluntariado, planejamento familiar)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Fases de Desenvolvimento</h3>
+        <div class="stages-flow">
+          <div class="stage-item" style="background:rgba(78,205,196,0.08);color:var(--accent2)">
+            <span class="step-num">①</span>Oportunidade e Ideia
+          </div>
+          <div class="stage-item" style="background:rgba(78,205,196,0.12);color:var(--accent2)">
+            <span class="step-num">②</span>Especificação do Projeto
+          </div>
+          <div class="stage-item" style="background:rgba(78,205,196,0.16);color:var(--accent2)">
+            <span class="step-num">③</span>Projeto Conceitual
+          </div>
+          <div class="stage-item" style="background:rgba(78,205,196,0.20);color:var(--accent2)">
+            <span class="step-num">④</span>Configuração do Produto
+          </div>
+          <div class="stage-item" style="background:rgba(78,205,196,0.24);color:var(--accent2)">
+            <span class="step-num">⑤</span>Desenhos Detalhados
+          </div>
+          <div class="stage-item" style="background:rgba(78,205,196,0.30);color:var(--accent2)">
+            <span class="step-num">⑥</span>Projeto p/ Fabricação
+          </div>
+        </div>
+      </div>
+
+      <!-- Piramide dos 5 Niveis -->
+      <div class="card">
+        <h3><span class="accent">✦</span> 5 Níveis de Produto (Pirâmide)</h3>
+        <div class="pyramid">
+          <div class="pyramid-level" style="width:60%;background:linear-gradient(135deg,#0d3b3b,#1a6b5a);color:#4ECDC4">
+            <span class="num">N5</span> PRODUTO POTENCIAL<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Melhorias futuras que diferenciam</span>
+          </div>
+          <div class="pyramid-level" style="width:68%;background:linear-gradient(135deg,#1a4a4a,#1f7a6a);color:#5fd9d0">
+            <span class="num">N4</span> PRODUTO AMPLIADO<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Excede expectativas</span>
+          </div>
+          <div class="pyramid-level" style="width:76%;background:linear-gradient(135deg,#1f5a50,#2a8a70);color:#7ae8d0">
+            <span class="num">N3</span> PRODUTO ESPERADO<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Atributos que o cliente espera</span>
+          </div>
+          <div class="pyramid-level" style="width:84%;background:linear-gradient(135deg,#256b5a,#359a80);color:#a0f0d8">
+            <span class="num">N2</span> PRODUTO BÁSICO<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Características complementares básicas</span>
+          </div>
+          <div class="pyramid-level" style="width:92%;background:linear-gradient(135deg,#2a7a68,#40aa90);color:#fff">
+            <span class="num">N1</span> BENEFÍCIO CENTRAL<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">O que realmente está sendo comprado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Classificação dos Produtos</h3>
+
+        <p style="margin-bottom:6px"><strong style="color:var(--accent2)">Durabilidade & Tangibilidade:</strong></p>
+        <ul>
+          <li><strong>Bens Duráveis</strong> — tangíveis, uso médio/longo prazo (notebook)</li>
+          <li><strong>Bens Não Duráveis</strong> — consumo imediato (alimentos, higiene)</li>
+          <li><strong>Serviços</strong> — intangíveis, inseparáveis, variáveis, perecíveis</li>
+        </ul>
+
+        <p style="margin-top:12px;margin-bottom:6px"><strong style="color:var(--accent2)">Bens de Consumo:</strong></p>
+        <ul>
+          <li><strong>Conveniência</strong> — compra frequente (básico, impulso, emergência)</li>
+          <li><strong>Compra Comparada</strong> — consumidor compara custo × benefício</li>
+          <li><strong>Especialidade</strong> — características únicas/marca, esforço extra</li>
+          <li><strong>Não Procurados</strong> — consumidor não pensa em comprar</li>
+        </ul>
+
+        <p style="margin-top:12px;margin-bottom:6px"><strong style="color:var(--accent2)">Bens Empresariais:</strong></p>
+        <ul>
+          <li><strong>Bens de Capital</strong> — instalações e equipamentos</li>
+          <li><strong>Materiais e Peças</strong> — matérias-primas e peças manufaturadas</li>
+          <li><strong>Suprimentos e Serviços</strong> — curta duração, manutenção</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DIFERENCIAÇÃO & LINHAS ========== -->
+  <section class="section" id="diferenciacao" data-theme="yellow">
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <div>
+        <h2>Diferenciação e Decisão de Linhas de Produto</h2>
+        <p>Vantagem competitiva, VRIO, extensão e estratégias de linha</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3><span class="accent">✦</span> O que é Diferenciação?</h3>
+        <div class="highlight-box">"Diferenças significativas são percebidas e valorizadas pelos consumidores."</div>
+        <p>Ato de desenvolver diferenças significativas (tangíveis e intangíveis) para distinguir a oferta da empresa em relação à concorrência.</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> 5 Formas de Diferenciação</h3>
+        <ul>
+          <li><strong style="color:var(--accent3)">Produto</strong> — atributos, benefícios, melhorias (descomoditizar)</li>
+          <li><strong style="color:var(--accent3)">Serviço</strong> — qualidade dos serviços adicionais</li>
+          <li><strong style="color:var(--accent3)">Recursos Humanos</strong> — confiabilidade, cortesia, credibilidade</li>
+          <li><strong style="color:var(--accent3)">Canal</strong> — desempenho e serviços prestados</li>
+          <li><strong style="color:var(--accent3)">Imagem</strong> — formação de imagem na mente do consumidor</li>
+        </ul>
+      </div>
+
+      <!-- VRIO framework -->
+      <div class="card">
+        <h3><span class="accent">✦</span> Eficácia na Diferenciação — Modelo VRIO</h3>
+        <table class="vrio-table">
+          <tr>
+            <th style="color:var(--accent3)">Critério</th>
+            <th style="color:var(--accent3)">Descrição</th>
+          </tr>
+          <tr>
+            <td><span style="color:var(--accent3);font-size:1.1rem">V</span> Valor</td>
+            <td style="text-align:left;font-size:0.75rem">Recursos valiosos para o consumidor (custo × benefício percebido)</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--accent3);font-size:1.1rem">R</span> Raridade</td>
+            <td style="text-align:left;font-size:0.75rem">Exclusivo, escasso, não oferecido por concorrentes</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--accent3);font-size:1.1rem">I</span> Imitabilidade</td>
+            <td style="text-align:left;font-size:0.75rem">Imperfeitamente imitável, concorrentes não conseguem reproduzir</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--accent3);font-size:1.1rem">O</span> Organização</td>
+            <td style="text-align:left;font-size:0.75rem">Cultura da empresa de explorar recursos valiosos, raros e inimitáveis</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Análise da Linha de Produtos</h3>
+        <ul>
+          <li><strong>Vendas e Lucros</strong> — % de vendas e lucros por linha</li>
+          <li><strong>Perfil de Mercado</strong> — posicionamento vs. concorrência (mapa de produtos)</li>
+          <li><strong>Análise SWOT</strong> — Forças, Fraquezas, Oportunidades e Ameaças comparativa</li>
+        </ul>
+        <div class="duo-split" style="margin-top:14px">
+          <div class="duo-box" style="background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2)">
+            <h4 style="color:var(--accent2)">Internas</h4>
+            <p style="font-size:0.75rem;color:var(--text2)"><strong>S</strong> Strengths (Forças)<br><strong>W</strong> Weaknesses (Fraquezas)</p>
+          </div>
+          <div class="duo-box" style="background:rgba(255,230,109,0.08);border:1px solid rgba(255,230,109,0.2)">
+            <h4 style="color:var(--accent3)">Externas</h4>
+            <p style="font-size:0.75rem;color:var(--text2)"><strong>O</strong> Opportunities (Oportunidades)<br><strong>T</strong> Threats (Ameaças)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card full-width">
+        <h3><span class="accent">✦</span> Estratégias de Extensão de Linha — Diagrama de Ampliação</h3>
+        <div style="display:flex;justify-content:center;margin:16px 0">
+          <svg viewBox="0 0 600 240" width="100%" style="max-width:600px">
+            <defs>
+              <linearGradient id="gUp" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#FFE66D" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#FFE66D" stop-opacity="0.6"/>
+              </linearGradient>
+              <linearGradient id="gDown" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4ECDC4" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#4ECDC4" stop-opacity="0.6"/>
+              </linearGradient>
+            </defs>
+            <!-- Eixo central -->
+            <rect x="180" y="95" width="240" height="50" rx="10" fill="#1C2333" stroke="#FFE66D" stroke-width="1.5"/>
+            <text x="300" y="118" text-anchor="middle" fill="#FFE66D" font-size="12" font-weight="700" font-family="Source Sans 3">LINHA ATUAL</text>
+            <text x="300" y="134" text-anchor="middle" fill="#8B949E" font-size="9" font-family="Source Sans 3">Mercado Médio</text>
+
+            <!-- Para cima -->
+            <path d="M300 95 L300 40" stroke="#FFE66D" stroke-width="2" marker-end="url(#arrowY)"/>
+            <rect x="370" y="15" width="200" height="55" rx="10" fill="url(#gUp)" stroke="#FFE66D" stroke-width="1"/>
+            <text x="470" y="35" text-anchor="middle" fill="#FFE66D" font-size="11" font-weight="700" font-family="Source Sans 3">↑ AMPLIAÇÃO ACIMA</text>
+            <text x="470" y="50" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Maiores margens, linha completa</text>
+            <text x="470" y="62" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Posicionamento premium</text>
+
+            <!-- Para baixo -->
+            <path d="M300 145 L300 195" stroke="#4ECDC4" stroke-width="2"/>
+            <rect x="370" y="170" width="200" height="55" rx="10" fill="url(#gDown)" stroke="#4ECDC4" stroke-width="1"/>
+            <text x="470" y="190" text-anchor="middle" fill="#4ECDC4" font-size="11" font-weight="700" font-family="Source Sans 3">↓ AMPLIAÇÃO ABAIXO</text>
+            <text x="470" y="205" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Oportunidade de crescimento</text>
+            <text x="470" y="217" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Bloquear concorrentes</text>
+
+            <!-- Dupla -->
+            <rect x="20" y="70" width="140" height="100" rx="10" fill="#1C2333" stroke="#A78BFA" stroke-width="1.5"/>
+            <text x="90" y="92" text-anchor="middle" fill="#A78BFA" font-size="10" font-weight="700" font-family="Source Sans 3">↕ DUPLA</text>
+            <text x="90" y="108" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">Ambos os sentidos</text>
+            <text x="90" y="122" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">Cada linha → mercado</text>
+            <text x="90" y="136" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">alvo diferente</text>
+            <text x="90" y="155" text-anchor="middle" fill="#F472B6" font-size="7.5" font-family="Source Sans 3">⚠ Risco: canibalização</text>
+            <line x1="160" y1="120" x2="180" y2="120" stroke="#A78BFA" stroke-width="1.5" stroke-dasharray="4 3"/>
+          </svg>
+        </div>
+
+        <div class="grid grid-3" style="margin-top:12px">
+          <div style="background:var(--bg2);padding:12px;border-radius:10px;border-left:3px solid var(--accent3)">
+            <p style="font-size:0.8rem"><strong style="color:var(--accent3)">Complementação</strong><br><span style="font-size:0.75rem;color:var(--text2)">Adicionar itens à faixa já existente para preencher lacunas</span></p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px;border-left:3px solid var(--accent4)">
+            <p style="font-size:0.8rem"><strong style="color:var(--accent4)">Modernização</strong><br><span style="font-size:0.75rem;color:var(--text2)">Renovação por etapas ou completa (inovação como motor)</span></p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:10px;border-left:3px solid var(--accent5)">
+            <p style="font-size:0.8rem"><strong style="color:var(--accent5)">Promoção & Redução</strong><br><span style="font-size:0.75rem;color:var(--text2)">Selecionar itens para promover; análise via BCG e CVP</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== INOVAÇÃO & CVP ========== -->
+  <section class="section" id="inovacao" data-theme="purple">
+    <div class="section-header">
+      <div class="section-icon">🚀</div>
+      <div>
+        <h2>Inovação, Desenvolvimento de Novos Produtos e CVP</h2>
+        <p>Inovação, ciclo de vida, Matriz BCG e estratégias</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3><span class="accent">✦</span> Inovação × Invenção</h3>
+        <div class="highlight-box">A diferença? <strong>O Mercado!</strong> A inovação deve ser percebida e absorvida pelo mercado enquanto geradora de valor.</div>
+        <div class="duo-split">
+          <div class="duo-box" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25)">
+            <h4 style="color:var(--accent4)">💥 Disruptiva</h4>
+            <p style="font-size:0.75rem;color:var(--text2)">Quebra paradigmas, cria novos mercados. Ex: Internet, Smartphones</p>
+          </div>
+          <div class="duo-box" style="background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2)">
+            <h4 style="color:var(--accent2)">🔧 Incremental</h4>
+            <p style="font-size:0.75rem;color:var(--text2)">Evolui tecnologia existente. Ex: Motores híbridos, versões melhoradas</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> 5 Dimensões da Inovação (Manual de Oslo)</h3>
+        <ul>
+          <li><strong style="color:var(--accent4)">Novos Produtos</strong> — bem ou serviço novo ou melhorado</li>
+          <li><strong style="color:var(--accent4)">Novos Processos</strong> — método de produção/distribuição novo</li>
+          <li><strong style="color:var(--accent4)">Novos Mercados</strong> — novo método de marketing, embalagem, posicionamento</li>
+          <li><strong style="color:var(--accent4)">Novas Fontes de MP</strong> — recursos e insumos inovadores</li>
+          <li><strong style="color:var(--accent4)">Novas Estruturas Org.</strong> — novo método organizacional, cultura</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Desenvolvimento de Novos Produtos</h3>
+        <p style="margin-bottom:8px"><strong>Estratégias:</strong> Produtos originais, melhorias, novas marcas, aquisição de empresa/patente, parcerias, licença</p>
+        <div class="duo-split">
+          <div class="duo-box" style="background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2)">
+            <h4 style="color:var(--accent2)">✅ Causas de Sucesso</h4>
+            <p style="font-size:0.75rem;color:var(--text2)">Conceito adequado · Exclusividade · Conhecimento do mercado · Benefícios superiores</p>
+          </div>
+          <div class="duo-box" style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2)">
+            <h4 style="color:var(--accent1)">❌ Causas de Fracasso</h4>
+            <p style="font-size:0.75rem;color:var(--text2)">Mercado superestimado · Projeto ruim · Posicionamento errado · Custos altos · Apenas 40% duram +5 anos</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Padronização da Inovação</h3>
+        <p>Uma tecnologia precisa adotar padrões de produção e uso para ser amplamente difundida.</p>
+        <ul style="margin-top:8px">
+          <li>Padrões facilitam a vida prática (ex: WhatsApp, Instagram)</li>
+          <li>Tecnologias inferiores podem dominar pelo aprendizado do uso ou poder da empresa (ex: VHS, Linux)</li>
+        </ul>
+      </div>
+
+      <!-- CVP Chart -->
+      <div class="card full-width">
+        <h3><span class="accent">✦</span> Ciclo de Vida do Produto (CVP) — Gráfico</h3>
+        <div style="display:flex;justify-content:center;margin:16px 0">
+          <svg viewBox="0 0 650 260" width="100%" style="max-width:650px">
+            <!-- Axes -->
+            <line x1="60" y1="210" x2="620" y2="210" stroke="#30363D" stroke-width="2"/>
+            <line x1="60" y1="20" x2="60" y2="210" stroke="#30363D" stroke-width="2"/>
+            <text x="30" y="120" fill="#8B949E" font-size="10" font-family="Source Sans 3" transform="rotate(-90,30,120)" text-anchor="middle">VOLUME / VENDAS</text>
+            <text x="340" y="240" fill="#8B949E" font-size="10" font-family="Source Sans 3" text-anchor="middle">TEMPO →</text>
+
+            <!-- Curve -->
+            <path d="M80 200 Q120 195 160 170 Q200 130 260 80 Q310 50 360 45 Q410 45 440 55 Q480 70 520 100 Q560 140 590 185" fill="none" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Profit curve (dashed) -->
+            <path d="M80 205 Q130 200 180 185 Q230 155 280 115 Q330 90 370 85 Q420 90 460 110 Q510 145 560 180 Q580 195 595 205" fill="none" stroke="#4ECDC4" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round"/>
+
+            <!-- Phase separators -->
+            <line x1="160" y1="20" x2="160" y2="210" stroke="#30363D" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="300" y1="20" x2="300" y2="210" stroke="#30363D" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="460" y1="20" x2="460" y2="210" stroke="#30363D" stroke-width="1" stroke-dasharray="4 4"/>
+
+            <!-- Phase labels -->
+            <text x="110" y="232" text-anchor="middle" fill="#FF6B6B" font-size="10" font-weight="700" font-family="Source Sans 3">Introdução</text>
+            <text x="230" y="232" text-anchor="middle" fill="#FFE66D" font-size="10" font-weight="700" font-family="Source Sans 3">Crescimento</text>
+            <text x="380" y="232" text-anchor="middle" fill="#4ECDC4" font-size="10" font-weight="700" font-family="Source Sans 3">Maturidade</text>
+            <text x="540" y="232" text-anchor="middle" fill="#F472B6" font-size="10" font-weight="700" font-family="Source Sans 3">Declínio</text>
+
+            <!-- Legend -->
+            <line x1="80" y1="10" x2="100" y2="10" stroke="#A78BFA" stroke-width="3"/>
+            <text x="105" y="14" fill="#A78BFA" font-size="9" font-family="Source Sans 3">Vendas</text>
+            <line x1="160" y1="10" x2="180" y2="10" stroke="#4ECDC4" stroke-width="2" stroke-dasharray="6 4"/>
+            <text x="185" y="14" fill="#4ECDC4" font-size="9" font-family="Source Sans 3">Lucro</text>
+
+            <!-- Phase descriptions -->
+            <text x="110" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Lançamento,</text>
+            <text x="110" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">incerteza</text>
+            <text x="230" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Aceitação rápida,</text>
+            <text x="230" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">expansão</text>
+            <text x="380" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Consolidado,</text>
+            <text x="380" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">alta participação</text>
+            <text x="540" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Obsolescência,</text>
+            <text x="540" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">queda</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- BCG Matrix -->
+      <div class="card full-width">
+        <h3><span class="accent">✦</span> Matriz BCG — Boston Consulting Group</h3>
+        <p style="margin-bottom:12px;font-size:0.82rem">Avalia portfólio de produtos com base em <strong style="color:var(--accent4)">Participação de Mercado</strong> (eixo X) × <strong style="color:var(--accent4)">Crescimento de Mercado</strong> (eixo Y).</p>
+
+        <div class="bcg-wrapper">
+          <div class="bcg-ylabel">Crescimento de Mercado →</div>
+          <div class="bcg-matrix">
+            <div class="bcg-cell" style="background:linear-gradient(135deg,#2d1f4e,#3d2a6e);border-radius:12px 4px 4px 4px">
+              <span class="emoji">❓</span>
+              <span style="color:#A78BFA">OPORTUNIDADE</span>
+              <span class="desc">Alto crescimento + Baixa participação. Retornos incertos; pode virar estrela.</span>
+            </div>
+            <div class="bcg-cell" style="background:linear-gradient(135deg,#3a2a10,#5a4020);border-radius:4px 12px 4px 4px">
+              <span class="emoji">⭐</span>
+              <span style="color:#FFE66D">ESTRELA</span>
+              <span class="desc">Alto crescimento + Alta participação. Líder, mas pode consumir muitos recursos.</span>
+            </div>
+            <div class="bcg-cell" style="background:linear-gradient(135deg,#2a1a1a,#4a2828);border-radius:4px 4px 4px 12px">
+              <span class="emoji">🐕</span>
+              <span style="color:#FF6B6B">ABACAXI</span>
+              <span class="desc">Baixo crescimento + Baixa participação. Custo alto; sugere retirada.</span>
+            </div>
+            <div class="bcg-cell" style="background:linear-gradient(135deg,#0f2a2a,#1a4a3a);border-radius:4px 4px 12px 4px">
+              <span class="emoji">🐄</span>
+              <span style="color:#4ECDC4">VACA LEITEIRA</span>
+              <span class="desc">Baixo crescimento + Alta participação. Mercado estável; gera caixa.</span>
+            </div>
+          </div>
+          <div></div>
+          <div class="bcg-label">← Participação de Mercado (Market Share) →</div>
+        </div>
+
+        <!-- CVP x BCG link -->
+        <div style="display:flex;justify-content:center;margin-top:20px">
+          <svg viewBox="0 0 560 60" width="100%" style="max-width:560px">
+            <rect x="0" y="10" width="120" height="40" rx="8" fill="rgba(167,139,250,0.15)" stroke="#A78BFA" stroke-width="1"/>
+            <text x="60" y="28" text-anchor="middle" fill="#A78BFA" font-size="9" font-weight="700" font-family="Source Sans 3">Introdução</text>
+            <text x="60" y="42" text-anchor="middle" fill="#A78BFA" font-size="8" font-family="Source Sans 3">❓ Oportunidade</text>
+
+            <text x="138" y="35" fill="#30363D" font-size="16">→</text>
+
+            <rect x="150" y="10" width="120" height="40" rx="8" fill="rgba(255,230,109,0.15)" stroke="#FFE66D" stroke-width="1"/>
+            <text x="210" y="28" text-anchor="middle" fill="#FFE66D" font-size="9" font-weight="700" font-family="Source Sans 3">Crescimento</text>
+            <text x="210" y="42" text-anchor="middle" fill="#FFE66D" font-size="8" font-family="Source Sans 3">⭐ Estrela</text>
+
+            <text x="288" y="35" fill="#30363D" font-size="16">→</text>
+
+            <rect x="300" y="10" width="120" height="40" rx="8" fill="rgba(78,205,196,0.15)" stroke="#4ECDC4" stroke-width="1"/>
+            <text x="360" y="28" text-anchor="middle" fill="#4ECDC4" font-size="9" font-weight="700" font-family="Source Sans 3">Maturidade</text>
+            <text x="360" y="42" text-anchor="middle" fill="#4ECDC4" font-size="8" font-family="Source Sans 3">🐄 Vaca Leiteira</text>
+
+            <text x="438" y="35" fill="#30363D" font-size="16">→</text>
+
+            <rect x="450" y="10" width="110" height="40" rx="8" fill="rgba(255,107,107,0.15)" stroke="#FF6B6B" stroke-width="1"/>
+            <text x="505" y="28" text-anchor="middle" fill="#FF6B6B" font-size="9" font-weight="700" font-family="Source Sans 3">Declínio</text>
+            <text x="505" y="42" text-anchor="middle" fill="#FF6B6B" font-size="8" font-family="Source Sans 3">🐕 Abacaxi</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MARCAS ========== -->
+  <section class="section" id="marca" data-theme="pink">
+    <div class="section-header">
+      <div class="section-icon">💎</div>
+      <div>
+        <h2>Unidade II — Marcas</h2>
+        <p>Conceito, natureza, dimensões, decisões e estratégias</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3><span class="accent">✦</span> O que é Marca?</h3>
+        <div class="highlight-box">"Nome, design, termo, símbolo — ou combinação — que identifica bens ou serviços e os diferencia dos da concorrência." — AMA</div>
+        <p>É a promessa de uma empresa ao cliente (benefícios funcionais, emocionais, de autoexpressão e sociais). Funciona como núcleo do relacionamento com o cliente e plataforma para opções estratégicas — <strong style="color:var(--accent5)">Brand Equity</strong>.</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Natureza da Marca</h3>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+          <div style="background:rgba(244,114,182,0.08);padding:10px;border-radius:8px;border:1px solid rgba(244,114,182,0.2)">
+            <strong style="color:var(--accent5);font-size:0.82rem">Produto</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Diferencia tangíveis (Sony, Philips)</p>
+          </div>
+          <div style="background:rgba(167,139,250,0.08);padding:10px;border-radius:8px;border:1px solid rgba(167,139,250,0.2)">
+            <strong style="color:var(--accent4);font-size:0.82rem">Serviço</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Diferencia intangíveis (Unimed)</p>
+          </div>
+          <div style="background:rgba(78,205,196,0.08);padding:10px;border-radius:8px;border:1px solid rgba(78,205,196,0.2)">
+            <strong style="color:var(--accent2);font-size:0.82rem">Coletiva</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Família de bens/serviços (Sadia)</p>
+          </div>
+          <div style="background:rgba(255,230,109,0.08);padding:10px;border-radius:8px;border:1px solid rgba(255,230,109,0.2)">
+            <strong style="color:var(--accent3);font-size:0.82rem">Certificação</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Padrões de produção (selo ABIC)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> 4 Dimensões da Marca</h3>
+        <ul>
+          <li><strong style="color:var(--accent5)">Reconhecimento</strong> — identidade do produto, visibilidade</li>
+          <li><strong style="color:var(--accent5)">Qualidade Percebida</strong> — inferências do consumidor sobre especificações</li>
+          <li><strong style="color:var(--accent5)">Associações</strong> — imagens, atributos, personalidade, símbolos</li>
+          <li><strong style="color:var(--accent5)">Fidelidade</strong> — relacionamento afetivo de longo prazo</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Formas da Marca</h3>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
+            <div style="font-size:1.5rem">🔤</div>
+            <strong style="font-size:0.82rem">Nominativa</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Identidade textual</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
+            <div style="font-size:1.5rem">🎨</div>
+            <strong style="font-size:0.82rem">Figurativa</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Imagens, símbolos</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
+            <div style="font-size:1.5rem">📐</div>
+            <strong style="font-size:0.82rem">Tridimensional</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Formato 3D do produto</p>
+          </div>
+          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
+            <div style="font-size:1.5rem">🔗</div>
+            <strong style="font-size:0.82rem">Mista</strong>
+            <p style="font-size:0.72rem;color:var(--text2)">Combinação das anteriores</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loyalty Ladder -->
+      <div class="card">
+        <h3><span class="accent">✦</span> Escala de Fidelidade à Marca (Aaker)</h3>
+        <div class="loyalty-ladder">
+          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.3),rgba(244,114,182,0.05))">
+            <span class="level-num" style="color:var(--accent5)">5</span>
+            <span style="font-size:0.78rem"><strong>Devoto</strong> — Fanático pela marca</span>
+          </div>
+          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.22),rgba(244,114,182,0.04))">
+            <span class="level-num" style="color:var(--accent5)">4</span>
+            <span style="font-size:0.78rem"><strong>Fiel</strong> — Valoriza como parte de sua vida</span>
+          </div>
+          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.16),rgba(244,114,182,0.03))">
+            <span class="level-num" style="color:var(--accent5)">3</span>
+            <span style="font-size:0.78rem"><strong>Satisfeito c/ custos</strong> — Incorrerá custos ao trocar</span>
+          </div>
+          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.10),rgba(244,114,182,0.02))">
+            <span class="level-num" style="color:var(--accent5)">2</span>
+            <span style="font-size:0.78rem"><strong>Satisfeito</strong> — Sem razão para trocar</span>
+          </div>
+          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.06),rgba(244,114,182,0.01))">
+            <span class="level-num" style="color:var(--accent5)">1</span>
+            <span style="font-size:0.78rem"><strong>Sem fidelidade</strong> — Troca por preço</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="accent">✦</span> Decisões de Marca</h3>
+        <p style="margin-bottom:6px"><strong style="color:var(--accent5)">Patrocínio:</strong></p>
+        <ul>
+          <li>Marca do fabricante (nacional/regional)</li>
+          <li>Marca do distribuidor/revendedor</li>
+          <li>Marca licenciada</li>
+          <li>Fabricante + Revendedor combinadas</li>
+        </ul>
+        <p style="margin-top:10px;margin-bottom:6px"><strong style="color:var(--accent5)">Nomes:</strong></p>
+        <ul>
+          <li><strong>Individuais</strong> — fracasso não afeta empresa</li>
+          <li><strong>Família abrangentes</strong> — menor custo</li>
+          <li><strong>Famílias separadas</strong> — para produtos diferentes</li>
+          <li><strong>Nome da empresa + produto</strong> — (ex: montadoras)</li>
+        </ul>
+      </div>
+
+      <div class="card full-width">
+        <h3><span class="accent">✦</span> 5 Estratégias de Marca</h3>
+        <div class="grid grid-5" style="margin-top:10px">
+          <div style="background:rgba(244,114,182,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(244,114,182,0.2)">
+            <div style="font-size:1.3rem">📏</div>
+            <strong style="font-size:0.8rem;color:var(--accent5)">Extensão de Linha</strong>
+            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Novos itens na mesma categoria (sabores, tamanhos)</p>
+          </div>
+          <div style="background:rgba(167,139,250,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(167,139,250,0.2)">
+            <div style="font-size:1.3rem">🌱</div>
+            <strong style="font-size:0.8rem;color:var(--accent4)">Extensão de Marca</strong>
+            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Nome existente em novas categorias</p>
+          </div>
+          <div style="background:rgba(78,205,196,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(78,205,196,0.2)">
+            <div style="font-size:1.3rem">🏷️</div>
+            <strong style="font-size:0.8rem;color:var(--accent2)">Multimarcas</strong>
+            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Várias marcas na mesma categoria</p>
+          </div>
+          <div style="background:rgba(255,230,109,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(255,230,109,0.2)">
+            <div style="font-size:1.3rem">✨</div>
+            <strong style="font-size:0.8rem;color:var(--accent3)">Novas Marcas</strong>
+            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Nova categoria sem marca adequada</p>
+          </div>
+          <div style="background:rgba(255,107,107,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(255,107,107,0.2)">
+            <div style="font-size:1.3rem">🤝</div>
+            <strong style="font-size:0.8rem;color:var(--accent1)">Nomes Combinados</strong>
+            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Marcas duplas para fortalecer preferência</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="footer-note">
+  Mapa Mental Completo — MSPP — Prof. Rodrigo Cassimiro de Freitas · PUC Minas · 2024/1
+</div>
+
+<script>
+  const pills = document.querySelectorAll('.nav-pill');
+  const sections = document.querySelectorAll('.section');
+
+  function goTo(id) {
+    pills.forEach(p => p.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      const pill = document.querySelector(`[data-target="${id}"]`);
+      if (pill) pill.classList.add('active');
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      goTo(pill.dataset.target);
+    });
+  });
+</script>
+</body>
+</html>
