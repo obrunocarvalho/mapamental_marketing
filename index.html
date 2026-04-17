@@ -876,10 +876,12 @@ function initMap(){
   const wrap=document.getElementById('mapw');
   const W=wrap.clientWidth, H=wrap.clientHeight;
   const cx=W/2, cy=H/2;
+  const minDim = Math.min(W, H);
   
-  // Garantir raio mínimo para que os nós nunca se aglomerem (mesmo no mobile)
-  const baseDim = Math.max(W, 800); 
-  const radius = baseDim / 2 * 0.82;
+  // No web, mantém a proporção natural baseada na menor dimensão da tela.
+  // No mobile, impõe um raio mínimo (340px) para afastar os nós.
+  let radius = minDim / 2 * (W < 500 ? 0.70 : 0.80);
+  if (W <= 700) radius = Math.max(radius, 340);
 
   svg=d3.select('#mindmap').attr('width',W).attr('height',H);
 
