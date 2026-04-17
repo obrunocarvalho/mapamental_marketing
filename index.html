@@ -258,6 +258,44 @@ canvas#cvpC{width:100%!important;display:block}
     #zc{bottom:calc(18px + env(safe-area-inset-bottom))}
   }
 }
+
+/* ── AUTHOR MODAL ── */
+#author-modal {
+  position:fixed; inset:0; z-index:3000; display:flex; align-items:center; justify-content:center;
+  pointer-events:none; opacity:0; transition:opacity .3s;
+}
+#author-modal.show { pointer-events:all; opacity:1; }
+.am-bg { position:absolute; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(3px); }
+.am-content {
+  position:relative; background:rgba(10,13,26,.95); backdrop-filter:blur(16px);
+  border:1px solid var(--bd); border-radius:16px; padding:38px 46px 36px; text-align:center;
+  transform:translateY(20px); transition:transform .3s cubic-bezier(.23,1,.32,1);
+  box-shadow:0 12px 40px rgba(0,0,0,.5); min-width:320px;
+}
+#author-modal.show .am-content { transform:translateY(0); }
+.am-close {
+  position:absolute; top:14px; right:14px; width:28px; height:28px; background:var(--sf);
+  border:1px solid var(--bd); color:var(--mu); border-radius:8px; display:flex; align-items:center; justify-content:center;
+  cursor:none; transition:all .2s; font-size:.9rem;
+}
+.am-close:hover { background:var(--sfh); color:var(--tx); }
+.am-icon {
+  width:64px; height:64px; margin:0 auto 18px; border-radius:18px;
+  background:linear-gradient(135deg, rgba(0,229,204,.15), rgba(183,127,255,.15));
+  border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center;
+  color:var(--teal); box-shadow:0 0 24px rgba(0,229,204,.1);
+}
+.am-icon svg { width:32px; height:32px; }
+.am-title { font-size:.7rem; color:var(--mu); text-transform:uppercase; letter-spacing:.1em; margin-bottom:8px; font-weight:700; }
+.am-name { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:700; color:var(--tx); margin-bottom:4px; }
+.am-course { font-size:.85rem; color:var(--gold); margin-bottom:18px; font-weight:600; }
+.am-email { font-family:'JetBrains Mono',monospace; font-size:.75rem; color:rgba(238,242,255,.7); background:var(--sf); padding:7px 12px; border-radius:6px; display:inline-block; border:1px solid rgba(255,255,255,.05); }
+
+@media(max-width:700px){
+  .am-content { padding:32px 24px 28px; min-width:calc(100vw - 48px); }
+  .am-name { font-size:1.2rem; }
+  .am-email { font-size:.65rem; }
+}
 </style>
 </head>
 <body>
@@ -266,6 +304,23 @@ canvas#cvpC{width:100%!important;display:block}
 <canvas id="three-bg"></canvas>
 <div id="noise"></div>
 <div id="ttip"></div>
+
+<div id="author-modal">
+  <div class="am-bg"></div>
+  <div class="am-content">
+    <button class="am-close">✕</button>
+    <div class="am-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </div>
+    <div class="am-title">Desenvolvedor do Projeto</div>
+    <div class="am-name">Bruno Henrique Alves Carvalho</div>
+    <div class="am-course">Ciências Econômicas</div>
+    <div class="am-email">bruno.carvalho.1413340@sga.pucminas.br</div>
+  </div>
+</div>
 
 <div id="app">
   <div id="panel-overlay"></div>
@@ -290,6 +345,12 @@ canvas#cvpC{width:100%!important;display:block}
       <div id="leg"></div>
       <div id="mob-hint">✦ Toque nos nós para explorar</div>
       <div id="zc">
+        <button class="zb" id="zauthor" style="margin-bottom:6px">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
         <button class="zb" id="zin">+</button>
         <button class="zb" id="zout">−</button>
         <button class="zb" id="zrst" style="font-size:.72rem">⊕</button>
@@ -1345,6 +1406,10 @@ document.getElementById('zout').addEventListener('click',()=>d3.select('#mapw').
 document.getElementById('zrst').addEventListener('click',()=>{
   if(window._mapInitT) d3.select('#mapw').transition().duration(500).call(zoomBeh.transform, window._mapInitT);
 });
+
+document.getElementById('zauthor').addEventListener('click',()=>document.getElementById('author-modal').classList.add('show'));
+document.querySelector('.am-close').addEventListener('click',()=>document.getElementById('author-modal').classList.remove('show'));
+document.querySelector('.am-bg').addEventListener('click',()=>document.getElementById('author-modal').classList.remove('show'));
 
 /* ══════════════════════════════════════════════════════
    MOBILE — Handle-only swipe to close
