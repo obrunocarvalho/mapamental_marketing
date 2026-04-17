@@ -266,9 +266,9 @@ canvas#cvpC{width:100%!important;display:block}
 <canvas id="three-bg"></canvas>
 <div id="noise"></div>
 <div id="ttip"></div>
-<div id="panel-overlay"></div>
 
 <div id="app">
+  <div id="panel-overlay"></div>
   <header id="hdr">
     <div class="hlogo">
       <div class="hgem">
@@ -880,6 +880,9 @@ function initMap(){
   const radius=minDim/2*(W<500?0.70:0.80);
 
   svg=d3.select('#mindmap').attr('width',W).attr('height',H);
+
+  // Fundo transparente para capturar eventos de toque/arraste no mobile
+  svg.append('rect').attr('width', '100%').attr('height', '100%').attr('fill', 'transparent').attr('pointer-events', 'all');
 
   const defs=svg.append('defs');
 
