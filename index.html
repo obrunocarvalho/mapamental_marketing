@@ -3,1343 +3,1406 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mapa Mental – Marketing de Serviços, Produtos e Preços</title>
+<title>Nivelamento, Gestão de Produtos e Marcas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#05070F;--bg2:#0A0D1A;
+  --sf:rgba(255,255,255,0.035);--sfh:rgba(255,255,255,0.065);
+  --bd:rgba(255,255,255,0.07);--bdh:rgba(255,255,255,0.16);
+  --tx:#EEF2FF;--mu:rgba(238,242,255,0.45);--mu2:rgba(238,242,255,0.22);
+  --red:#FF6B6B;--teal:#00E5CC;--gold:#FFD93D;--vio:#B77FFF;--rose:#FF7EB3;
+  --pw:440px;--hh:58px
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;cursor:none}
 
-  :root {
-    --bg: #0D1117;
-    --bg2: #161B22;
-    --card: #1C2333;
-    --border: #30363D;
-    --text: #E6EDF3;
-    --text2: #8B949E;
-    --accent1: #FF6B6B;
-    --accent2: #4ECDC4;
-    --accent3: #FFE66D;
-    --accent4: #A78BFA;
-    --accent5: #F472B6;
-    --accent6: #38BDF8;
-    --glow1: rgba(255,107,107,0.15);
-    --glow2: rgba(78,205,196,0.15);
-    --glow3: rgba(255,230,109,0.15);
-    --glow4: rgba(167,139,250,0.15);
-    --glow5: rgba(244,114,182,0.15);
-    --glow6: rgba(56,189,248,0.15);
-  }
+/* ── CURSOR ── */
+#cur{position:fixed;width:10px;height:10px;background:var(--tx);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .15s,height .15s}
+#curR{position:fixed;width:34px;height:34px;border:1.5px solid rgba(238,242,255,0.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s cubic-bezier(.23,1,.32,1),height .25s cubic-bezier(.23,1,.32,1)}
+body.ch #cur{width:6px;height:6px}
+body.ch #curR{width:50px;height:50px;border-color:rgba(238,242,255,0.5)}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+#three-bg{position:fixed;inset:0;z-index:0}
+#noise{position:fixed;inset:0;z-index:1;opacity:.022;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#ttip{position:fixed;z-index:5000;background:rgba(5,7,15,.92);backdrop-filter:blur(12px);border:1px solid var(--bd);border-radius:8px;padding:6px 11px;font-size:.73rem;pointer-events:none;opacity:0;transition:opacity .18s;white-space:nowrap}
 
-  body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-  }
+/* ── APP SHELL ── */
+#app{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column}
+#hdr{height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:rgba(5,7,15,.72);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);flex-shrink:0}
+.hgem{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--red),var(--vio));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 18px rgba(255,107,107,.28)}
+.hgem svg{width:14px;height:14px}
+.hlogo{display:flex;align-items:center;gap:11px}
+.htitle{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.02em}
+.hsub{font-size:.7rem;color:var(--mu);margin-top:1px}
+.hright{display:flex;align-items:center;gap:8px}
+.hchip{padding:4px 13px;border-radius:100px;border:1px solid var(--bd);background:var(--sf);font-size:.7rem;color:var(--mu);backdrop-filter:blur(8px)}
+.hhint{font-size:.7rem;color:var(--mu2);display:flex;align-items:center;gap:5px}
+.hhint span{animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}
 
-  .hero {
-    text-align: center;
-    padding: 40px 20px 20px;
-    position: relative;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -100px; left: 50%; transform: translateX(-50%);
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(255,107,107,0.08) 0%, rgba(78,205,196,0.05) 40%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.4rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--accent1), var(--accent3), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
-  }
-  .hero .sub {
-    font-size: 0.95rem;
-    color: var(--text2);
-    margin-top: 6px;
-    font-weight: 300;
-  }
+/* ── MAIN ── */
+#main{flex:1;display:flex;overflow:hidden;position:relative}
+#mapw{flex:1;position:relative;overflow:hidden}
+#mindmap{width:100%;height:100%}
 
-  .nav-pills {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px 20px;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(13,17,23,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-pill {
-    padding: 8px 18px;
-    border-radius: 20px;
-    border: 1.5px solid var(--border);
-    background: var(--bg2);
-    color: var(--text2);
-    cursor: pointer;
-    font-size: 0.82rem;
-    font-weight: 600;
-    transition: all 0.3s;
-    font-family: 'Source Sans 3', sans-serif;
-  }
-  .nav-pill:hover, .nav-pill.active {
-    border-color: var(--accent);
-    color: var(--text);
-    background: var(--glow);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px var(--glow);
-  }
+/* ── LEGEND ── */
+#leg{position:absolute;bottom:22px;left:22px;background:rgba(5,7,15,.6);backdrop-filter:blur(14px);border:1px solid var(--bd);border-radius:11px;padding:12px 14px;display:flex;gap:12px;flex-wrap:wrap;max-width:380px}
+.li{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--mu)}
+.ld{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
+/* ── ZOOM ── */
+#zc{position:absolute;bottom:22px;right:22px;display:flex;flex-direction:column;gap:4px}
+.zb{width:34px;height:34px;background:rgba(5,7,15,.6);backdrop-filter:blur(12px);border:1px solid var(--bd);border-radius:8px;color:var(--mu);font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:none;transition:background .2s,color .2s}
+.zb:hover{background:var(--sfh);color:var(--tx)}
 
-  .section {
-    display: none;
-    animation: fadeUp 0.5s ease;
-  }
-  .section.active { display: block; }
+/* ── PANEL ── */
+#panel{width:var(--pw);flex-shrink:0;background:rgba(5,7,15,.84);backdrop-filter:blur(28px) saturate(1.3);border-left:1px solid var(--bd);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .42s cubic-bezier(.23,1,.32,1);overflow:hidden}
+#panel.open{transform:translateX(0)}
+#phdr{padding:18px 20px 15px;border-bottom:1px solid var(--bd);flex-shrink:0;position:relative}
+#pclose{position:absolute;top:16px;right:16px;width:26px;height:26px;border-radius:7px;background:var(--sf);border:1px solid var(--bd);color:var(--mu);font-size:.95rem;display:flex;align-items:center;justify-content:center;cursor:none;transition:all .2s}
+#pclose:hover{background:var(--sfh);color:var(--tx)}
+#pico{font-size:0;line-height:0;margin-bottom:8px;display:flex;align-items:center}
+#pico svg{width:22px;height:22px}
+#ptitle{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700}
+#psub{font-size:.75rem;color:var(--mu);margin-top:2px}
+#pbody{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 18px 28px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+#pbody::-webkit-scrollbar{width:3px}
+#pbody::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+/* ── PANEL COMPONENTS ── */
+.pq{background:var(--sf);border-left:2.5px solid var(--c,#fff);border-radius:0 9px 9px 0;padding:10px 13px;font-style:italic;font-size:.8rem;color:var(--tx);margin-bottom:13px;line-height:1.6}
+.plbl{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--c,var(--mu));margin-bottom:7px}
+.psec{margin-bottom:16px}
+.pg{display:grid;gap:6px}
+.pg2{grid-template-columns:1fr 1fr}
+.pg3{grid-template-columns:1fr 1fr 1fr}
+.pc{background:var(--sf);border:1px solid var(--bd);border-radius:9px;padding:11px;font-size:.77rem;transition:background .2s;line-height:1.5}
+.pc:hover{background:var(--sfh)}
+.pc strong{display:block;font-size:.78rem;margin-bottom:2px}
+.pul{list-style:none;padding:0}
+.pul li{padding:5px 0 5px 15px;position:relative;font-size:.78rem;color:rgba(238,242,255,.78);border-bottom:1px solid rgba(255,255,255,.04)}
+.pul li:last-child{border-bottom:none}
+.pul li::before{content:'▸';position:absolute;left:0;color:var(--c,#fff);font-size:.68rem;top:6px}
+.pdup{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px}
+.pdb{padding:11px;border-radius:9px;font-size:.77rem}
+.pdb h4{font-size:.78rem;margin-bottom:4px}
+.pdb p{color:var(--mu);line-height:1.5}
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-    padding-bottom: 14px;
-    border-bottom: 2px solid var(--border);
-  }
-  .section-icon {
-    width: 48px; height: 48px;
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-  .section-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-  }
-  .section-header p {
-    font-size: 0.85rem;
-    color: var(--text2);
-    margin-top: 2px;
-  }
+/* Pyramid */
+.pyrw{display:flex;flex-direction:column;align-items:center;gap:3px;margin:8px 0 12px}
+.prw{padding:8px 11px;text-align:center;border-radius:7px;font-size:.74rem;font-weight:600;cursor:default;transition:transform .18s}
+.prw:hover{transform:scaleX(1.04)}
+.prn{font-family:'JetBrains Mono',monospace;font-size:.6rem;opacity:.55;display:block}
 
-  .grid { display: grid; gap: 16px; }
-  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-  .grid-5 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+/* BCG */
+.bcgg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0 12px}
+.bcgq{padding:13px 11px;border-radius:9px;text-align:center;cursor:default;transition:transform .18s;position:relative;overflow:hidden}
+.bcgq:hover{transform:scale(1.03)}
+.bcgq::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent);pointer-events:none}
+.bcge{font-size:1.5rem;display:block;margin-bottom:4px}
+.bcgn{font-weight:700;font-size:.8rem;display:block;margin-bottom:3px}
+.bcgd{font-size:.67rem;opacity:.68;line-height:1.4}
+.bcgax{display:flex;justify-content:space-between;font-size:.63rem;color:var(--mu2);font-family:'JetBrains Mono',monospace;margin-top:5px;padding:0 3px}
 
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    border-radius: 14px 14px 0 0;
-  }
-  .card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card p, .card li {
-    font-size: 0.83rem;
-    color: var(--text2);
-    line-height: 1.55;
-  }
-  .card ul {
-    list-style: none;
-    padding: 0;
-  }
-  .card ul li {
-    padding: 4px 0 4px 16px;
-    position: relative;
-  }
-  .card ul li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    font-weight: 700;
-  }
+/* Ladder */
+.ladw{display:flex;flex-direction:column;gap:3px;margin:8px 0 12px}
+.lads{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;transition:transform .14s;cursor:default}
+.lads:hover{transform:translateX(3px)}
+.ladn{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:600;min-width:20px}
 
-  .tag {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    margin: 2px;
-  }
+/* VRIO */
+.vriot{width:100%;border-collapse:separate;border-spacing:0 3px;margin:7px 0 12px}
+.vriot th{font-family:'Syne',sans-serif;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--c,var(--mu));padding:5px;text-align:left}
+.vriot td{padding:8px 10px;background:var(--sf);font-size:.75rem}
+.vriot tr td:first-child{border-radius:7px 0 0 7px;font-weight:600;min-width:75px}
+.vriot tr td:last-child{border-radius:0 7px 7px 0;color:var(--mu)}
 
-  /* COLOR THEMES per section */
-  [data-theme="red"] { --accent: var(--accent1); --glow: var(--glow1); }
-  [data-theme="teal"] { --accent: var(--accent2); --glow: var(--glow2); }
-  [data-theme="yellow"] { --accent: var(--accent3); --glow: var(--glow3); }
-  [data-theme="purple"] { --accent: var(--accent4); --glow: var(--glow4); }
-  [data-theme="pink"] { --accent: var(--accent5); --glow: var(--glow5); }
-  [data-theme="blue"] { --accent: var(--accent6); --glow: var(--glow6); }
+/* Flow stages */
+.fsw{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px;margin:7px 0 12px}
+.fss{padding:9px 7px;border-radius:9px;text-align:center;font-size:.68rem;font-weight:600}
+.fsn{font-family:'JetBrains Mono',monospace;font-size:.95rem;display:block;margin-bottom:2px}
 
-  .accent { color: var(--accent); }
-  .card::before { background: var(--accent); }
-  .card ul li::before { color: var(--accent); }
-  .section-icon { background: var(--glow); color: var(--accent); }
+/* Strategy grid */
+.stg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0 12px}
+.stc{padding:11px;border-radius:9px;text-align:center;font-size:.74rem;border:1px solid rgba(255,255,255,.07);transition:transform .18s;cursor:default}
+.stc:hover{transform:translateY(-2px)}
+.sti{margin-bottom:8px;display:flex;justify-content:center}
+.sti svg{width:20px;height:20px}
+.stn{font-weight:700;display:block;margin-bottom:3px}
+.std{color:var(--mu);font-size:.67rem;line-height:1.4}
 
-  /* SPECIAL: Levels pyramid */
-  .pyramid {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    margin: 16px 0;
+/* Bridge */
+.brid{display:flex;gap:3px;margin:7px 0 14px}
+.brit{flex:1;padding:8px 5px;border-radius:7px;text-align:center;font-size:.68rem;font-weight:600;border:1px solid rgba(255,255,255,.08)}
+.bria{color:var(--mu2);font-size:.95rem;align-self:center;flex-shrink:0}
+
+/* CVP */
+.cvpw{margin:8px 0 12px;background:rgba(255,255,255,.025);border-radius:10px;padding:12px 8px 10px;position:relative}
+canvas#cvpC{width:100%!important;display:block}
+.cvpph{display:flex;margin-top:5px;border-top:1px solid rgba(255,255,255,.05);padding-top:5px}
+.cvppl{flex:1;text-align:center;font-size:.62rem;font-weight:600;padding:2px}
+
+/* Loading */
+#ld{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .6s,visibility .6s}
+#ld.gone{opacity:0;visibility:hidden}
+.ldl{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--red),var(--vio));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ldb{width:150px;height:2.5px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.ldp{height:100%;background:linear-gradient(90deg,var(--red),var(--vio),var(--teal));width:0;animation:ldgo 1.5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes ldgo{to{width:100%}}
+.lds{font-size:.75rem;color:var(--mu2)}
+/* ── DRAG HANDLE ── */
+#pdrag{width:36px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:0 auto 14px;display:none}
+
+/* Prevent text selection / tap-highlight on map */
+#mindmap{-webkit-user-select:none;user-select:none;touch-action:none}
+#mindmap text{pointer-events:none;-webkit-user-select:none;user-select:none}
+.node-hit{-webkit-tap-highlight-color:transparent;outline:none}
+
+/* ══════════════════════════════════════════
+   MOBILE — App-like experience
+══════════════════════════════════════════ */
+@media(max-width:700px){
+  /* Hide desktop cursor */
+  #cur,#curR{display:none}
+  body{cursor:auto}
+
+  /* ── Header compact ── */
+  #hdr{height:52px;padding:0 16px}
+  .htitle{font-size:.78rem}
+  .hsub{font-size:.64rem}
+  .hright{display:none}
+  .hgem{width:26px;height:26px;border-radius:6px}
+  .hgem svg{width:12px;height:12px}
+
+  /* ── Map takes full screen ── */
+  #main{position:relative;overflow:hidden}
+  #mapw{flex:1}
+
+  /* ── Panel as bottom sheet ── */
+  #panel{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    width:100%!important;
+    height:75vh;
+    border-left:none;
+    border-top:1px solid rgba(255,255,255,.1);
+    border-radius:20px 20px 0 0;
+    transform:translateY(100%);
+    z-index:200;
+    flex-shrink:0;
   }
-  .pyramid-level {
-    padding: 10px;
-    text-align: center;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--bg);
-    transition: transform 0.2s;
+  #panel.open{transform:translateY(0)}
+  #pdrag{display:block}
+  #pclose{top:auto;right:16px;top:16px}
+  #phdr{padding:14px 18px 12px}
+  #phdr::before{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(5,7,15,.96);
+    border-radius:20px 20px 0 0;
+    pointer-events:none;
+    z-index:-1;
   }
-  .pyramid-level:hover { transform: scale(1.05); }
-  .pyramid-level .num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    opacity: 0.7;
+  #pbody{padding:12px 16px 40px;-webkit-overflow-scrolling:touch}
+
+  /* ── Bottom dimmer behind sheet ── */
+  #panel-overlay{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0);
+    z-index:199;
+    pointer-events:none;
+    transition:background .35s;
+  }
+  #panel-overlay.show{
+    background:rgba(0,0,0,.5);
+    pointer-events:all;
   }
 
-  /* BCG Matrix */
-  .bcg-matrix {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 8px;
-    max-width: 400px;
-    margin: 12px auto;
-  }
-  .bcg-cell {
-    padding: 16px 12px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.82rem;
-    position: relative;
-  }
-  .bcg-cell .emoji { font-size: 1.6rem; display: block; margin-bottom: 6px; }
-  .bcg-cell .desc {
-    font-size: 0.7rem;
-    font-weight: 400;
-    color: rgba(255,255,255,0.7);
-    margin-top: 4px;
-  }
-  .bcg-label {
-    font-size: 0.65rem;
-    color: var(--text2);
-    text-align: center;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .bcg-ylabel {
-    writing-mode: vertical-lr;
-    transform: rotate(180deg);
-    font-size: 0.65rem;
-    color: var(--text2);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .bcg-wrapper {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    grid-template-rows: 1fr auto;
-    gap: 6px;
-    max-width: 440px;
-    margin: 12px auto;
+  /* ── Zoom controls: bigger tap targets ── */
+  #zc{bottom:18px;right:14px}
+  .zb{width:40px;height:40px;border-radius:10px}
+
+  /* ── Legend: collapsed ── */
+  #leg{display:none}
+
+  /* ── Mobile floating hint ── */
+  #mob-hint{
+    display:flex;
   }
 
-  /* CVP Chart */
-  .cvp-chart {
-    position: relative;
-    height: 180px;
-    margin: 20px 0 10px;
-    border-left: 2px solid var(--border);
-    border-bottom: 2px solid var(--border);
-    border-radius: 0 0 0 6px;
-  }
-  .cvp-curve {
-    position: absolute;
-    bottom: 0; left: 0; right: 0; top: 0;
-  }
-  .cvp-labels {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 8px;
-  }
-  .cvp-label {
-    text-align: center;
-    font-size: 0.7rem;
-    font-weight: 600;
-  }
-  .cvp-label .phase { color: var(--accent); }
+  /* ── Touch-friendly nodes ── */
+  .node-hit{touch-action:manipulation}
 
-  /* Macro/Micro diagram */
-  .env-diagram {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin: 16px 0;
-  }
-  .env-ring {
-    border: 2px dashed;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    transition: transform 0.3s;
-  }
-  .env-ring:hover { transform: scale(1.05); }
+  /* ── Panel content adjustments ── */
+  .pdup,.pg2{grid-template-columns:1fr}
+  .stg{grid-template-columns:1fr 1fr}
+  .brid{flex-wrap:wrap;gap:4px}
+  .brit{min-width:60px}
+  .bria{display:none}
+  .fsw{grid-template-columns:1fr 1fr}
 
-  /* Overview central map */
-  .overview-map {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    padding: 30px 0;
-  }
-  .central-node {
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-size: 1.1rem;
-    background: linear-gradient(135deg, var(--accent1), var(--accent3));
-    color: var(--bg);
-    box-shadow: 0 0 60px rgba(255,107,107,0.2), 0 0 120px rgba(78,205,196,0.1);
-    position: relative;
-    z-index: 2;
-  }
-  .central-node .small {
-    font-size: 0.65rem;
-    font-weight: 400;
-    opacity: 0.7;
-    margin-top: 4px;
-  }
-  .branches {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    width: 100%;
-  }
-  .branch-card {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-  .branch-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-  }
-  .branch-card::after {
-    content: '→';
-    position: absolute;
-    bottom: 10px;
-    right: 14px;
-    font-size: 0.8rem;
-    opacity: 0.3;
-    transition: opacity 0.3s;
-  }
-  .branch-card:hover::after { opacity: 0.8; }
-  .branch-icon { font-size: 2rem; margin-bottom: 8px; }
-  .branch-card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    margin-bottom: 6px;
-  }
-  .branch-card p {
-    font-size: 0.75rem;
-    color: var(--text2);
-  }
-  .branch-card .topics {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px;
-  }
+  /* ── Typography scale down ── */
+  #ptitle{font-size:1.02rem}
+  .pc,.pul li,.pdb p{font-size:.76rem}
+  .plbl{font-size:.62rem}
+}
 
-  /* VRIO table */
-  .vrio-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 4px;
-    font-size: 0.78rem;
-    margin-top: 10px;
-  }
-  .vrio-table th {
-    padding: 8px;
-    text-align: center;
-    font-weight: 700;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .vrio-table td {
-    padding: 8px 10px;
-    background: var(--bg2);
-    text-align: center;
-  }
-  .vrio-table tr td:first-child {
-    border-radius: 8px 0 0 8px;
-    text-align: left;
-    font-weight: 600;
-  }
-  .vrio-table tr td:last-child { border-radius: 0 8px 8px 0; }
+/* ── Mobile hint bubble ── */
+#mob-hint{
+  display:none;
+  position:absolute;
+  bottom:80px;left:50%;transform:translateX(-50%);
+  background:rgba(5,7,15,.8);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:100px;
+  padding:8px 16px;
+  font-size:.72rem;color:rgba(238,242,255,.6);
+  white-space:nowrap;
+  animation:hintFade 4s ease 2s forwards;
+  pointer-events:none;
+}
+@keyframes hintFade{0%{opacity:1}70%{opacity:1}100%{opacity:0;visibility:hidden}}
 
-  /* Innovation stages */
-  .stages-flow {
-    display: flex;
-    gap: 4px;
-    overflow-x: auto;
-    padding: 10px 0;
-    margin-top: 10px;
+/* ── Safe area bottom padding for iOS ── */
+@supports(padding-bottom: env(safe-area-inset-bottom)){
+  @media(max-width:700px){
+    #pbody{padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+    #zc{bottom:calc(18px + env(safe-area-inset-bottom))}
   }
-  .stage-item {
-    min-width: 100px;
-    padding: 12px 8px;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 0.7rem;
-    font-weight: 600;
-    flex-shrink: 0;
-    position: relative;
-  }
-  .stage-item .step-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.2rem;
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  /* Brand loyalty ladder */
-  .loyalty-ladder {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 12px;
-  }
-  .loyalty-step {
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .loyalty-step .level-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem;
-    min-width: 28px;
-    text-align: center;
-  }
-
-  .full-width { grid-column: 1 / -1; }
-
-  .highlight-box {
-    background: var(--glow);
-    border-left: 3px solid var(--accent);
-    padding: 12px 16px;
-    border-radius: 0 10px 10px 0;
-    margin: 10px 0;
-    font-size: 0.82rem;
-    font-style: italic;
-    color: var(--text);
-  }
-
-  .duo-split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .duo-box {
-    padding: 14px;
-    border-radius: 10px;
-    font-size: 0.78rem;
-  }
-  .duo-box h4 {
-    font-size: 0.82rem;
-    margin-bottom: 6px;
-  }
-
-  .footer-note {
-    text-align: center;
-    padding: 30px;
-    font-size: 0.75rem;
-    color: var(--text2);
-    border-top: 1px solid var(--border);
-    margin-top: 40px;
-  }
-
-  @media (max-width: 600px) {
-    .hero h1 { font-size: 1.6rem; }
-    .grid-2, .grid-3, .grid-5 { grid-template-columns: 1fr; }
-    .branches { grid-template-columns: 1fr; }
-    .duo-split { grid-template-columns: 1fr; }
-    .stages-flow { flex-wrap: wrap; }
-    .bcg-matrix { max-width: 100%; }
-  }
+}
 </style>
 </head>
 <body>
+<div id="cur"></div><div id="curR"></div>
+<div id="ld"><div class="ldl">NGPM</div><div class="ldb"><div class="ldp"></div></div><div class="lds">Inicializando mapa mental...</div></div>
+<canvas id="three-bg"></canvas>
+<div id="noise"></div>
+<div id="ttip"></div>
+<div id="panel-overlay"></div>
 
-<div class="hero">
-  <h1>Marketing de Serviços, Produtos e Preços</h1>
-  <p class="sub">Mapa Mental Completo — Prof. Rodrigo Cassimiro de Freitas · PUC Minas</p>
-</div>
-
-<nav class="nav-pills" id="nav">
-  <button class="nav-pill active" data-target="overview" data-theme="red" style="--accent:var(--accent1);--glow:var(--glow1)">🗺️ Visão Geral</button>
-  <button class="nav-pill" data-target="conceitos" data-theme="red" style="--accent:var(--accent1);--glow:var(--glow1)">📚 Conceitos Básicos</button>
-  <button class="nav-pill" data-target="produto" data-theme="teal" style="--accent:var(--accent2);--glow:var(--glow2)">📦 Gestão do Produto</button>
-  <button class="nav-pill" data-target="diferenciacao" data-theme="yellow" style="--accent:var(--accent3);--glow:var(--glow3)">🎯 Diferenciação & Linhas</button>
-  <button class="nav-pill" data-target="inovacao" data-theme="purple" style="--accent:var(--accent4);--glow:var(--glow4)">🚀 Inovação & CVP</button>
-  <button class="nav-pill" data-target="marca" data-theme="pink" style="--accent:var(--accent5);--glow:var(--glow5)">💎 Marcas</button>
-</nav>
-
-<div class="container">
-
-  <!-- ========== OVERVIEW ========== -->
-  <section class="section active" id="overview" data-theme="red">
-    <div class="overview-map">
-      <div class="central-node">
-        MSPP<br>Marketing
-        <span class="small">Serviços, Produtos & Preços</span>
+<div id="app">
+  <header id="hdr">
+    <div class="hlogo">
+      <div class="hgem">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
       </div>
-      <div class="branches">
-        <div class="branch-card" onclick="goTo('conceitos')" style="border-color: var(--accent1);">
-          <div class="branch-icon">📚</div>
-          <h3 style="color:var(--accent1)">Unidade 0 — Conceitos Básicos</h3>
-          <p>Fundamentos, mercado, funções mercadológicas, ambientes de marketing</p>
-          <div class="topics">
-            <span class="tag" style="background:var(--glow1);color:var(--accent1)">Micro</span>
-            <span class="tag" style="background:var(--glow1);color:var(--accent1)">Macro</span>
-            <span class="tag" style="background:var(--glow1);color:var(--accent1)">6 Ambientes</span>
-          </div>
-        </div>
-        <div class="branch-card" onclick="goTo('produto')" style="border-color: var(--accent2);">
-          <div class="branch-icon">📦</div>
-          <h3 style="color:var(--accent2)">Unidade I — Gestão do Produto</h3>
-          <p>Concepção, classificação, níveis de produto, estratégias</p>
-          <div class="topics">
-            <span class="tag" style="background:var(--glow2);color:var(--accent2)">5 Níveis</span>
-            <span class="tag" style="background:var(--glow2);color:var(--accent2)">Classificação</span>
-            <span class="tag" style="background:var(--glow2);color:var(--accent2)">6 Fases</span>
-          </div>
-        </div>
-        <div class="branch-card" onclick="goTo('diferenciacao')" style="border-color: var(--accent3);">
-          <div class="branch-icon">🎯</div>
-          <h3 style="color:var(--accent3)">Unidade I — Diferenciação & Linhas</h3>
-          <p>Diferenciação, VRIO, extensão, modernização e promoção de linhas</p>
-          <div class="topics">
-            <span class="tag" style="background:var(--glow3);color:var(--accent3)">VRIO</span>
-            <span class="tag" style="background:var(--glow3);color:var(--accent3)">Ampliação</span>
-            <span class="tag" style="background:var(--glow3);color:var(--accent3)">SWOT</span>
-          </div>
-        </div>
-        <div class="branch-card" onclick="goTo('inovacao')" style="border-color: var(--accent4);">
-          <div class="branch-icon">🚀</div>
-          <h3 style="color:var(--accent4)">Unidade I — Inovação & CVP</h3>
-          <p>Inovação, ciclo de vida do produto, Matriz BCG</p>
-          <div class="topics">
-            <span class="tag" style="background:var(--glow4);color:var(--accent4)">BCG</span>
-            <span class="tag" style="background:var(--glow4);color:var(--accent4)">CVP</span>
-            <span class="tag" style="background:var(--glow4);color:var(--accent4)">Disruptiva</span>
-          </div>
-        </div>
-        <div class="branch-card" onclick="goTo('marca')" style="border-color: var(--accent5);">
-          <div class="branch-icon">💎</div>
-          <h3 style="color:var(--accent5)">Unidade II — Marcas</h3>
-          <p>Conceito, natureza, dimensões, decisões e estratégias de marca</p>
-          <div class="topics">
-            <span class="tag" style="background:var(--glow5);color:var(--accent5)">Brand Equity</span>
-            <span class="tag" style="background:var(--glow5);color:var(--accent5)">Fidelidade</span>
-            <span class="tag" style="background:var(--glow5);color:var(--accent5)">Estratégias</span>
-          </div>
-        </div>
-      </div>
+      <div><div class="htitle">Nivelamento, Gestão de Produtos e Marcas</div><div class="hsub">Prof. Rodrigo Cassimiro de Freitas · PUC Minas · 2026/1</div></div>
     </div>
-  </section>
+    <div class="hright">
+      <div class="hchip">Unidades 0 – II</div>
+      <div class="hhint"><span>●</span> Clique nos nós para explorar o conteúdo</div>
+    </div>
+  </header>
 
-  <!-- ========== CONCEITOS BASICOS ========== -->
-  <section class="section" id="conceitos" data-theme="red">
-    <div class="section-header">
-      <div class="section-icon">📚</div>
-      <div>
-        <h2>Unidade 0 — Conceitos Básicos de Marketing</h2>
-        <p>Fundamentos, ambientes e funções mercadológicas</p>
+  <div id="main">
+    <div id="mapw">
+      <svg id="mindmap"></svg>
+      <div id="leg"></div>
+      <div id="mob-hint">✦ Toque nos nós para explorar</div>
+      <div id="zc">
+        <button class="zb" id="zin">+</button>
+        <button class="zb" id="zout">−</button>
+        <button class="zb" id="zrst" style="font-size:.72rem">⊕</button>
       </div>
     </div>
 
-    <div class="grid grid-2">
-      <div class="card">
-        <h3><span class="accent">✦</span> O que é Marketing?</h3>
-        <div class="highlight-box">
-          "Ciência e arte de explorar, criar e entregar valor para satisfazer necessidades de um mercado-alvo com lucro." — Kotler
-        </div>
-        <p>Disciplina aplicada das ciências gerenciais que estuda as relações no ambiente mercadológico (ambiência interna e externa). Foco: <strong style="color:var(--accent1)">surpreender o cliente</strong>.</p>
+    <div id="panel">
+      <div id="phdr">
+        <div id="pdrag"></div>
+        <button id="pclose">✕</button>
+        <div id="pico"></div>
+        <div id="ptitle">—</div>
+        <div id="psub">—</div>
       </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> O que é o Mercado?</h3>
-        <p>Espaço de negociações entre <strong>ofertadores</strong> e <strong>consumidores</strong>, com troca de produtos que atendam às necessidades mercadológicas. Os produtos podem ser:</p>
-        <ul>
-          <li><strong>Bens</strong> (tangíveis)</li>
-          <li><strong>Serviços</strong> (intangíveis)</li>
-          <li><strong>Misturas</strong> de bens e serviços</li>
-        </ul>
-      </div>
-
-      <div class="card full-width">
-        <h3><span class="accent">✦</span> Funções Mercadológicas</h3>
-        <div class="grid grid-3" style="margin-top:10px">
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Produto</strong><br>Desenvolvimento e gerenciamento de produto</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Preço</strong><br>Estratégias de precificação</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Distribuição</strong><br>Localização e conveniências</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Comunicação</strong><br>CIM — Comunicação Integrada de Marketing</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Vendas</strong><br>Fortalecimento da força de vendas</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Estratégia</strong><br>Planos de Marketing e segmentação</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Marcas</strong><br>Desenvolvimento de marcas</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Conexão</strong><br>Canais de conexão com clientes</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px">
-            <p><strong style="color:var(--accent1)">Crescimento</strong><br>Performance mercadológica a longo prazo</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ambientes Diagram -->
-      <div class="card full-width">
-        <h3><span class="accent">✦</span> Ambientes de Marketing — Diagrama</h3>
-        <div style="display:flex;justify-content:center;margin:20px 0">
-          <svg viewBox="0 0 700 380" width="100%" style="max-width:700px">
-            <!-- Macro ring -->
-            <ellipse cx="350" cy="190" rx="330" ry="175" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
-            <text x="350" y="28" text-anchor="middle" fill="#FF6B6B" font-size="12" font-weight="700" font-family="Source Sans 3">MACROAMBIENTE (Ambiente Geral) — Incontrolável</text>
-            <!-- macro items -->
-            <g font-size="9.5" fill="#E6EDF3" font-family="Source Sans 3" font-weight="600">
-              <rect x="20" y="60" width="110" height="48" rx="8" fill="#2a1520" stroke="#FF6B6B" stroke-width="1"/>
-              <text x="75" y="80" text-anchor="middle" fill="#FF6B6B">Demográfico</text>
-              <text x="75" y="94" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">População, etnia,</text>
-              <text x="75" y="103" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">migração, família</text>
-
-              <rect x="570" y="60" width="110" height="48" rx="8" fill="#1a2520" stroke="#4ECDC4" stroke-width="1"/>
-              <text x="625" y="80" text-anchor="middle" fill="#4ECDC4">Econômico</text>
-              <text x="625" y="94" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Renda, crédito,</text>
-              <text x="625" y="103" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">zonas de comércio</text>
-
-              <rect x="5" y="260" width="110" height="48" rx="8" fill="#1a1a25" stroke="#A78BFA" stroke-width="1"/>
-              <text x="60" y="280" text-anchor="middle" fill="#A78BFA">Sócio-Cultural</text>
-              <text x="60" y="294" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Valores, crenças,</text>
-              <text x="60" y="303" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">arte, religião</text>
-
-              <rect x="585" y="260" width="110" height="48" rx="8" fill="#251a20" stroke="#F472B6" stroke-width="1"/>
-              <text x="640" y="280" text-anchor="middle" fill="#F472B6">Natural</text>
-              <text x="640" y="294" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Recursos, energia,</text>
-              <text x="640" y="303" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">poluição, regulação</text>
-
-              <rect x="120" y="330" width="110" height="42" rx="8" fill="#252520" stroke="#FFE66D" stroke-width="1"/>
-              <text x="175" y="350" text-anchor="middle" fill="#FFE66D">Tecnológico</text>
-              <text x="175" y="364" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Inovação, P&D, patentes</text>
-
-              <rect x="470" y="330" width="110" height="42" rx="8" fill="#1a2025" stroke="#38BDF8" stroke-width="1"/>
-              <text x="525" y="350" text-anchor="middle" fill="#38BDF8">Político-Legal</text>
-              <text x="525" y="364" text-anchor="middle" fill="#8B949E" font-size="8" font-weight="400">Leis, CDC, agências</text>
-            </g>
-
-            <!-- Micro ring -->
-            <ellipse cx="350" cy="185" rx="190" ry="120" fill="none" stroke="#4ECDC4" stroke-width="2" opacity="0.5"/>
-            <text x="350" y="90" text-anchor="middle" fill="#4ECDC4" font-size="11" font-weight="700" font-family="Source Sans 3">MICROAMBIENTE (Ambiente de Tarefa) — Gerenciável</text>
-
-            <g font-size="9" fill="#E6EDF3" font-family="Source Sans 3">
-              <rect x="195" y="110" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
-              <text x="240" y="130" text-anchor="middle" fill="#4ECDC4" font-weight="600">Fornecedores</text>
-
-              <rect x="415" y="110" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
-              <text x="460" y="130" text-anchor="middle" fill="#4ECDC4" font-weight="600">Concorrência</text>
-
-              <rect x="175" y="220" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
-              <text x="220" y="240" text-anchor="middle" fill="#4ECDC4" font-weight="600">Distribuidores</text>
-
-              <rect x="435" y="220" width="90" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
-              <text x="480" y="240" text-anchor="middle" fill="#4ECDC4" font-weight="600">Clientes-alvo</text>
-
-              <rect x="290" y="255" width="120" height="32" rx="8" fill="#142025" stroke="#4ECDC4" stroke-width="1"/>
-              <text x="350" y="275" text-anchor="middle" fill="#4ECDC4" font-weight="600">Parceiros Estratégicos</text>
-            </g>
-
-            <!-- Centro: Empresa -->
-            <circle cx="350" cy="180" r="38" fill="#1a2a2a" stroke="#4ECDC4" stroke-width="2"/>
-            <text x="350" y="176" text-anchor="middle" fill="#4ECDC4" font-size="11" font-weight="700" font-family="Source Sans 3">EMPRESA</text>
-            <text x="350" y="192" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">(departamentos)</text>
-          </svg>
-        </div>
-      </div>
+      <div id="pbody"></div>
     </div>
-  </section>
-
-  <!-- ========== GESTÃO DO PRODUTO ========== -->
-  <section class="section" id="produto" data-theme="teal">
-    <div class="section-header">
-      <div class="section-icon">📦</div>
-      <div>
-        <h2>Gestão do Produto — Concepção, Classificação e Estratégia</h2>
-        <p>Níveis, categorias e processo de desenvolvimento</p>
-      </div>
-    </div>
-
-    <div class="grid grid-2">
-      <div class="card">
-        <h3><span class="accent">✦</span> Concepção do Produto</h3>
-        <p>Aquilo que pode ser comercializado a partir de uma ideia inovadora (espontânea ou por P&D) com intenção de gerar riquezas. O produto é o <strong style="color:var(--accent2)">1º e mais importante elemento do mix de marketing</strong>.</p>
-        <p style="margin-top:8px"><strong>Categorias de Produtos:</strong></p>
-        <ul>
-          <li>Bens Físicos (automóveis, computadores)</li>
-          <li>Serviços (educação, condomínios)</li>
-          <li>Pessoas (celebridades, atletas)</li>
-          <li>Locais (Paris, Rio de Janeiro)</li>
-          <li>Eventos (Olimpíadas, Copa do Mundo)</li>
-          <li>Ideias (voluntariado, planejamento familiar)</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Fases de Desenvolvimento</h3>
-        <div class="stages-flow">
-          <div class="stage-item" style="background:rgba(78,205,196,0.08);color:var(--accent2)">
-            <span class="step-num">①</span>Oportunidade e Ideia
-          </div>
-          <div class="stage-item" style="background:rgba(78,205,196,0.12);color:var(--accent2)">
-            <span class="step-num">②</span>Especificação do Projeto
-          </div>
-          <div class="stage-item" style="background:rgba(78,205,196,0.16);color:var(--accent2)">
-            <span class="step-num">③</span>Projeto Conceitual
-          </div>
-          <div class="stage-item" style="background:rgba(78,205,196,0.20);color:var(--accent2)">
-            <span class="step-num">④</span>Configuração do Produto
-          </div>
-          <div class="stage-item" style="background:rgba(78,205,196,0.24);color:var(--accent2)">
-            <span class="step-num">⑤</span>Desenhos Detalhados
-          </div>
-          <div class="stage-item" style="background:rgba(78,205,196,0.30);color:var(--accent2)">
-            <span class="step-num">⑥</span>Projeto p/ Fabricação
-          </div>
-        </div>
-      </div>
-
-      <!-- Piramide dos 5 Niveis -->
-      <div class="card">
-        <h3><span class="accent">✦</span> 5 Níveis de Produto (Pirâmide)</h3>
-        <div class="pyramid">
-          <div class="pyramid-level" style="width:60%;background:linear-gradient(135deg,#0d3b3b,#1a6b5a);color:#4ECDC4">
-            <span class="num">N5</span> PRODUTO POTENCIAL<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Melhorias futuras que diferenciam</span>
-          </div>
-          <div class="pyramid-level" style="width:68%;background:linear-gradient(135deg,#1a4a4a,#1f7a6a);color:#5fd9d0">
-            <span class="num">N4</span> PRODUTO AMPLIADO<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Excede expectativas</span>
-          </div>
-          <div class="pyramid-level" style="width:76%;background:linear-gradient(135deg,#1f5a50,#2a8a70);color:#7ae8d0">
-            <span class="num">N3</span> PRODUTO ESPERADO<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Atributos que o cliente espera</span>
-          </div>
-          <div class="pyramid-level" style="width:84%;background:linear-gradient(135deg,#256b5a,#359a80);color:#a0f0d8">
-            <span class="num">N2</span> PRODUTO BÁSICO<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">Características complementares básicas</span>
-          </div>
-          <div class="pyramid-level" style="width:92%;background:linear-gradient(135deg,#2a7a68,#40aa90);color:#fff">
-            <span class="num">N1</span> BENEFÍCIO CENTRAL<br><span style="font-size:0.68rem;font-weight:400;opacity:0.8">O que realmente está sendo comprado</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Classificação dos Produtos</h3>
-
-        <p style="margin-bottom:6px"><strong style="color:var(--accent2)">Durabilidade & Tangibilidade:</strong></p>
-        <ul>
-          <li><strong>Bens Duráveis</strong> — tangíveis, uso médio/longo prazo (notebook)</li>
-          <li><strong>Bens Não Duráveis</strong> — consumo imediato (alimentos, higiene)</li>
-          <li><strong>Serviços</strong> — intangíveis, inseparáveis, variáveis, perecíveis</li>
-        </ul>
-
-        <p style="margin-top:12px;margin-bottom:6px"><strong style="color:var(--accent2)">Bens de Consumo:</strong></p>
-        <ul>
-          <li><strong>Conveniência</strong> — compra frequente (básico, impulso, emergência)</li>
-          <li><strong>Compra Comparada</strong> — consumidor compara custo × benefício</li>
-          <li><strong>Especialidade</strong> — características únicas/marca, esforço extra</li>
-          <li><strong>Não Procurados</strong> — consumidor não pensa em comprar</li>
-        </ul>
-
-        <p style="margin-top:12px;margin-bottom:6px"><strong style="color:var(--accent2)">Bens Empresariais:</strong></p>
-        <ul>
-          <li><strong>Bens de Capital</strong> — instalações e equipamentos</li>
-          <li><strong>Materiais e Peças</strong> — matérias-primas e peças manufaturadas</li>
-          <li><strong>Suprimentos e Serviços</strong> — curta duração, manutenção</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== DIFERENCIAÇÃO & LINHAS ========== -->
-  <section class="section" id="diferenciacao" data-theme="yellow">
-    <div class="section-header">
-      <div class="section-icon">🎯</div>
-      <div>
-        <h2>Diferenciação e Decisão de Linhas de Produto</h2>
-        <p>Vantagem competitiva, VRIO, extensão e estratégias de linha</p>
-      </div>
-    </div>
-
-    <div class="grid grid-2">
-      <div class="card">
-        <h3><span class="accent">✦</span> O que é Diferenciação?</h3>
-        <div class="highlight-box">"Diferenças significativas são percebidas e valorizadas pelos consumidores."</div>
-        <p>Ato de desenvolver diferenças significativas (tangíveis e intangíveis) para distinguir a oferta da empresa em relação à concorrência.</p>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> 5 Formas de Diferenciação</h3>
-        <ul>
-          <li><strong style="color:var(--accent3)">Produto</strong> — atributos, benefícios, melhorias (descomoditizar)</li>
-          <li><strong style="color:var(--accent3)">Serviço</strong> — qualidade dos serviços adicionais</li>
-          <li><strong style="color:var(--accent3)">Recursos Humanos</strong> — confiabilidade, cortesia, credibilidade</li>
-          <li><strong style="color:var(--accent3)">Canal</strong> — desempenho e serviços prestados</li>
-          <li><strong style="color:var(--accent3)">Imagem</strong> — formação de imagem na mente do consumidor</li>
-        </ul>
-      </div>
-
-      <!-- VRIO framework -->
-      <div class="card">
-        <h3><span class="accent">✦</span> Eficácia na Diferenciação — Modelo VRIO</h3>
-        <table class="vrio-table">
-          <tr>
-            <th style="color:var(--accent3)">Critério</th>
-            <th style="color:var(--accent3)">Descrição</th>
-          </tr>
-          <tr>
-            <td><span style="color:var(--accent3);font-size:1.1rem">V</span> Valor</td>
-            <td style="text-align:left;font-size:0.75rem">Recursos valiosos para o consumidor (custo × benefício percebido)</td>
-          </tr>
-          <tr>
-            <td><span style="color:var(--accent3);font-size:1.1rem">R</span> Raridade</td>
-            <td style="text-align:left;font-size:0.75rem">Exclusivo, escasso, não oferecido por concorrentes</td>
-          </tr>
-          <tr>
-            <td><span style="color:var(--accent3);font-size:1.1rem">I</span> Imitabilidade</td>
-            <td style="text-align:left;font-size:0.75rem">Imperfeitamente imitável, concorrentes não conseguem reproduzir</td>
-          </tr>
-          <tr>
-            <td><span style="color:var(--accent3);font-size:1.1rem">O</span> Organização</td>
-            <td style="text-align:left;font-size:0.75rem">Cultura da empresa de explorar recursos valiosos, raros e inimitáveis</td>
-          </tr>
-        </table>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Análise da Linha de Produtos</h3>
-        <ul>
-          <li><strong>Vendas e Lucros</strong> — % de vendas e lucros por linha</li>
-          <li><strong>Perfil de Mercado</strong> — posicionamento vs. concorrência (mapa de produtos)</li>
-          <li><strong>Análise SWOT</strong> — Forças, Fraquezas, Oportunidades e Ameaças comparativa</li>
-        </ul>
-        <div class="duo-split" style="margin-top:14px">
-          <div class="duo-box" style="background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2)">
-            <h4 style="color:var(--accent2)">Internas</h4>
-            <p style="font-size:0.75rem;color:var(--text2)"><strong>S</strong> Strengths (Forças)<br><strong>W</strong> Weaknesses (Fraquezas)</p>
-          </div>
-          <div class="duo-box" style="background:rgba(255,230,109,0.08);border:1px solid rgba(255,230,109,0.2)">
-            <h4 style="color:var(--accent3)">Externas</h4>
-            <p style="font-size:0.75rem;color:var(--text2)"><strong>O</strong> Opportunities (Oportunidades)<br><strong>T</strong> Threats (Ameaças)</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card full-width">
-        <h3><span class="accent">✦</span> Estratégias de Extensão de Linha — Diagrama de Ampliação</h3>
-        <div style="display:flex;justify-content:center;margin:16px 0">
-          <svg viewBox="0 0 600 240" width="100%" style="max-width:600px">
-            <defs>
-              <linearGradient id="gUp" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stop-color="#FFE66D" stop-opacity="0.2"/>
-                <stop offset="100%" stop-color="#FFE66D" stop-opacity="0.6"/>
-              </linearGradient>
-              <linearGradient id="gDown" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#4ECDC4" stop-opacity="0.2"/>
-                <stop offset="100%" stop-color="#4ECDC4" stop-opacity="0.6"/>
-              </linearGradient>
-            </defs>
-            <!-- Eixo central -->
-            <rect x="180" y="95" width="240" height="50" rx="10" fill="#1C2333" stroke="#FFE66D" stroke-width="1.5"/>
-            <text x="300" y="118" text-anchor="middle" fill="#FFE66D" font-size="12" font-weight="700" font-family="Source Sans 3">LINHA ATUAL</text>
-            <text x="300" y="134" text-anchor="middle" fill="#8B949E" font-size="9" font-family="Source Sans 3">Mercado Médio</text>
-
-            <!-- Para cima -->
-            <path d="M300 95 L300 40" stroke="#FFE66D" stroke-width="2" marker-end="url(#arrowY)"/>
-            <rect x="370" y="15" width="200" height="55" rx="10" fill="url(#gUp)" stroke="#FFE66D" stroke-width="1"/>
-            <text x="470" y="35" text-anchor="middle" fill="#FFE66D" font-size="11" font-weight="700" font-family="Source Sans 3">↑ AMPLIAÇÃO ACIMA</text>
-            <text x="470" y="50" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Maiores margens, linha completa</text>
-            <text x="470" y="62" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Posicionamento premium</text>
-
-            <!-- Para baixo -->
-            <path d="M300 145 L300 195" stroke="#4ECDC4" stroke-width="2"/>
-            <rect x="370" y="170" width="200" height="55" rx="10" fill="url(#gDown)" stroke="#4ECDC4" stroke-width="1"/>
-            <text x="470" y="190" text-anchor="middle" fill="#4ECDC4" font-size="11" font-weight="700" font-family="Source Sans 3">↓ AMPLIAÇÃO ABAIXO</text>
-            <text x="470" y="205" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Oportunidade de crescimento</text>
-            <text x="470" y="217" text-anchor="middle" fill="#8B949E" font-size="8.5" font-family="Source Sans 3">Bloquear concorrentes</text>
-
-            <!-- Dupla -->
-            <rect x="20" y="70" width="140" height="100" rx="10" fill="#1C2333" stroke="#A78BFA" stroke-width="1.5"/>
-            <text x="90" y="92" text-anchor="middle" fill="#A78BFA" font-size="10" font-weight="700" font-family="Source Sans 3">↕ DUPLA</text>
-            <text x="90" y="108" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">Ambos os sentidos</text>
-            <text x="90" y="122" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">Cada linha → mercado</text>
-            <text x="90" y="136" text-anchor="middle" fill="#8B949E" font-size="8" font-family="Source Sans 3">alvo diferente</text>
-            <text x="90" y="155" text-anchor="middle" fill="#F472B6" font-size="7.5" font-family="Source Sans 3">⚠ Risco: canibalização</text>
-            <line x1="160" y1="120" x2="180" y2="120" stroke="#A78BFA" stroke-width="1.5" stroke-dasharray="4 3"/>
-          </svg>
-        </div>
-
-        <div class="grid grid-3" style="margin-top:12px">
-          <div style="background:var(--bg2);padding:12px;border-radius:10px;border-left:3px solid var(--accent3)">
-            <p style="font-size:0.8rem"><strong style="color:var(--accent3)">Complementação</strong><br><span style="font-size:0.75rem;color:var(--text2)">Adicionar itens à faixa já existente para preencher lacunas</span></p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px;border-left:3px solid var(--accent4)">
-            <p style="font-size:0.8rem"><strong style="color:var(--accent4)">Modernização</strong><br><span style="font-size:0.75rem;color:var(--text2)">Renovação por etapas ou completa (inovação como motor)</span></p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:10px;border-left:3px solid var(--accent5)">
-            <p style="font-size:0.8rem"><strong style="color:var(--accent5)">Promoção & Redução</strong><br><span style="font-size:0.75rem;color:var(--text2)">Selecionar itens para promover; análise via BCG e CVP</span></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== INOVAÇÃO & CVP ========== -->
-  <section class="section" id="inovacao" data-theme="purple">
-    <div class="section-header">
-      <div class="section-icon">🚀</div>
-      <div>
-        <h2>Inovação, Desenvolvimento de Novos Produtos e CVP</h2>
-        <p>Inovação, ciclo de vida, Matriz BCG e estratégias</p>
-      </div>
-    </div>
-
-    <div class="grid grid-2">
-      <div class="card">
-        <h3><span class="accent">✦</span> Inovação × Invenção</h3>
-        <div class="highlight-box">A diferença? <strong>O Mercado!</strong> A inovação deve ser percebida e absorvida pelo mercado enquanto geradora de valor.</div>
-        <div class="duo-split">
-          <div class="duo-box" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25)">
-            <h4 style="color:var(--accent4)">💥 Disruptiva</h4>
-            <p style="font-size:0.75rem;color:var(--text2)">Quebra paradigmas, cria novos mercados. Ex: Internet, Smartphones</p>
-          </div>
-          <div class="duo-box" style="background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2)">
-            <h4 style="color:var(--accent2)">🔧 Incremental</h4>
-            <p style="font-size:0.75rem;color:var(--text2)">Evolui tecnologia existente. Ex: Motores híbridos, versões melhoradas</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> 5 Dimensões da Inovação (Manual de Oslo)</h3>
-        <ul>
-          <li><strong style="color:var(--accent4)">Novos Produtos</strong> — bem ou serviço novo ou melhorado</li>
-          <li><strong style="color:var(--accent4)">Novos Processos</strong> — método de produção/distribuição novo</li>
-          <li><strong style="color:var(--accent4)">Novos Mercados</strong> — novo método de marketing, embalagem, posicionamento</li>
-          <li><strong style="color:var(--accent4)">Novas Fontes de MP</strong> — recursos e insumos inovadores</li>
-          <li><strong style="color:var(--accent4)">Novas Estruturas Org.</strong> — novo método organizacional, cultura</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Desenvolvimento de Novos Produtos</h3>
-        <p style="margin-bottom:8px"><strong>Estratégias:</strong> Produtos originais, melhorias, novas marcas, aquisição de empresa/patente, parcerias, licença</p>
-        <div class="duo-split">
-          <div class="duo-box" style="background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2)">
-            <h4 style="color:var(--accent2)">✅ Causas de Sucesso</h4>
-            <p style="font-size:0.75rem;color:var(--text2)">Conceito adequado · Exclusividade · Conhecimento do mercado · Benefícios superiores</p>
-          </div>
-          <div class="duo-box" style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2)">
-            <h4 style="color:var(--accent1)">❌ Causas de Fracasso</h4>
-            <p style="font-size:0.75rem;color:var(--text2)">Mercado superestimado · Projeto ruim · Posicionamento errado · Custos altos · Apenas 40% duram +5 anos</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Padronização da Inovação</h3>
-        <p>Uma tecnologia precisa adotar padrões de produção e uso para ser amplamente difundida.</p>
-        <ul style="margin-top:8px">
-          <li>Padrões facilitam a vida prática (ex: WhatsApp, Instagram)</li>
-          <li>Tecnologias inferiores podem dominar pelo aprendizado do uso ou poder da empresa (ex: VHS, Linux)</li>
-        </ul>
-      </div>
-
-      <!-- CVP Chart -->
-      <div class="card full-width">
-        <h3><span class="accent">✦</span> Ciclo de Vida do Produto (CVP) — Gráfico</h3>
-        <div style="display:flex;justify-content:center;margin:16px 0">
-          <svg viewBox="0 0 650 260" width="100%" style="max-width:650px">
-            <!-- Axes -->
-            <line x1="60" y1="210" x2="620" y2="210" stroke="#30363D" stroke-width="2"/>
-            <line x1="60" y1="20" x2="60" y2="210" stroke="#30363D" stroke-width="2"/>
-            <text x="30" y="120" fill="#8B949E" font-size="10" font-family="Source Sans 3" transform="rotate(-90,30,120)" text-anchor="middle">VOLUME / VENDAS</text>
-            <text x="340" y="240" fill="#8B949E" font-size="10" font-family="Source Sans 3" text-anchor="middle">TEMPO →</text>
-
-            <!-- Curve -->
-            <path d="M80 200 Q120 195 160 170 Q200 130 260 80 Q310 50 360 45 Q410 45 440 55 Q480 70 520 100 Q560 140 590 185" fill="none" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
-
-            <!-- Profit curve (dashed) -->
-            <path d="M80 205 Q130 200 180 185 Q230 155 280 115 Q330 90 370 85 Q420 90 460 110 Q510 145 560 180 Q580 195 595 205" fill="none" stroke="#4ECDC4" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round"/>
-
-            <!-- Phase separators -->
-            <line x1="160" y1="20" x2="160" y2="210" stroke="#30363D" stroke-width="1" stroke-dasharray="4 4"/>
-            <line x1="300" y1="20" x2="300" y2="210" stroke="#30363D" stroke-width="1" stroke-dasharray="4 4"/>
-            <line x1="460" y1="20" x2="460" y2="210" stroke="#30363D" stroke-width="1" stroke-dasharray="4 4"/>
-
-            <!-- Phase labels -->
-            <text x="110" y="232" text-anchor="middle" fill="#FF6B6B" font-size="10" font-weight="700" font-family="Source Sans 3">Introdução</text>
-            <text x="230" y="232" text-anchor="middle" fill="#FFE66D" font-size="10" font-weight="700" font-family="Source Sans 3">Crescimento</text>
-            <text x="380" y="232" text-anchor="middle" fill="#4ECDC4" font-size="10" font-weight="700" font-family="Source Sans 3">Maturidade</text>
-            <text x="540" y="232" text-anchor="middle" fill="#F472B6" font-size="10" font-weight="700" font-family="Source Sans 3">Declínio</text>
-
-            <!-- Legend -->
-            <line x1="80" y1="10" x2="100" y2="10" stroke="#A78BFA" stroke-width="3"/>
-            <text x="105" y="14" fill="#A78BFA" font-size="9" font-family="Source Sans 3">Vendas</text>
-            <line x1="160" y1="10" x2="180" y2="10" stroke="#4ECDC4" stroke-width="2" stroke-dasharray="6 4"/>
-            <text x="185" y="14" fill="#4ECDC4" font-size="9" font-family="Source Sans 3">Lucro</text>
-
-            <!-- Phase descriptions -->
-            <text x="110" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Lançamento,</text>
-            <text x="110" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">incerteza</text>
-            <text x="230" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Aceitação rápida,</text>
-            <text x="230" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">expansão</text>
-            <text x="380" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Consolidado,</text>
-            <text x="380" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">alta participação</text>
-            <text x="540" y="250" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">Obsolescência,</text>
-            <text x="540" y="258" text-anchor="middle" fill="#8B949E" font-size="7.5" font-family="Source Sans 3">queda</text>
-          </svg>
-        </div>
-      </div>
-
-      <!-- BCG Matrix -->
-      <div class="card full-width">
-        <h3><span class="accent">✦</span> Matriz BCG — Boston Consulting Group</h3>
-        <p style="margin-bottom:12px;font-size:0.82rem">Avalia portfólio de produtos com base em <strong style="color:var(--accent4)">Participação de Mercado</strong> (eixo X) × <strong style="color:var(--accent4)">Crescimento de Mercado</strong> (eixo Y).</p>
-
-        <div class="bcg-wrapper">
-          <div class="bcg-ylabel">Crescimento de Mercado →</div>
-          <div class="bcg-matrix">
-            <div class="bcg-cell" style="background:linear-gradient(135deg,#2d1f4e,#3d2a6e);border-radius:12px 4px 4px 4px">
-              <span class="emoji">❓</span>
-              <span style="color:#A78BFA">OPORTUNIDADE</span>
-              <span class="desc">Alto crescimento + Baixa participação. Retornos incertos; pode virar estrela.</span>
-            </div>
-            <div class="bcg-cell" style="background:linear-gradient(135deg,#3a2a10,#5a4020);border-radius:4px 12px 4px 4px">
-              <span class="emoji">⭐</span>
-              <span style="color:#FFE66D">ESTRELA</span>
-              <span class="desc">Alto crescimento + Alta participação. Líder, mas pode consumir muitos recursos.</span>
-            </div>
-            <div class="bcg-cell" style="background:linear-gradient(135deg,#2a1a1a,#4a2828);border-radius:4px 4px 4px 12px">
-              <span class="emoji">🐕</span>
-              <span style="color:#FF6B6B">ABACAXI</span>
-              <span class="desc">Baixo crescimento + Baixa participação. Custo alto; sugere retirada.</span>
-            </div>
-            <div class="bcg-cell" style="background:linear-gradient(135deg,#0f2a2a,#1a4a3a);border-radius:4px 4px 12px 4px">
-              <span class="emoji">🐄</span>
-              <span style="color:#4ECDC4">VACA LEITEIRA</span>
-              <span class="desc">Baixo crescimento + Alta participação. Mercado estável; gera caixa.</span>
-            </div>
-          </div>
-          <div></div>
-          <div class="bcg-label">← Participação de Mercado (Market Share) →</div>
-        </div>
-
-        <!-- CVP x BCG link -->
-        <div style="display:flex;justify-content:center;margin-top:20px">
-          <svg viewBox="0 0 560 60" width="100%" style="max-width:560px">
-            <rect x="0" y="10" width="120" height="40" rx="8" fill="rgba(167,139,250,0.15)" stroke="#A78BFA" stroke-width="1"/>
-            <text x="60" y="28" text-anchor="middle" fill="#A78BFA" font-size="9" font-weight="700" font-family="Source Sans 3">Introdução</text>
-            <text x="60" y="42" text-anchor="middle" fill="#A78BFA" font-size="8" font-family="Source Sans 3">❓ Oportunidade</text>
-
-            <text x="138" y="35" fill="#30363D" font-size="16">→</text>
-
-            <rect x="150" y="10" width="120" height="40" rx="8" fill="rgba(255,230,109,0.15)" stroke="#FFE66D" stroke-width="1"/>
-            <text x="210" y="28" text-anchor="middle" fill="#FFE66D" font-size="9" font-weight="700" font-family="Source Sans 3">Crescimento</text>
-            <text x="210" y="42" text-anchor="middle" fill="#FFE66D" font-size="8" font-family="Source Sans 3">⭐ Estrela</text>
-
-            <text x="288" y="35" fill="#30363D" font-size="16">→</text>
-
-            <rect x="300" y="10" width="120" height="40" rx="8" fill="rgba(78,205,196,0.15)" stroke="#4ECDC4" stroke-width="1"/>
-            <text x="360" y="28" text-anchor="middle" fill="#4ECDC4" font-size="9" font-weight="700" font-family="Source Sans 3">Maturidade</text>
-            <text x="360" y="42" text-anchor="middle" fill="#4ECDC4" font-size="8" font-family="Source Sans 3">🐄 Vaca Leiteira</text>
-
-            <text x="438" y="35" fill="#30363D" font-size="16">→</text>
-
-            <rect x="450" y="10" width="110" height="40" rx="8" fill="rgba(255,107,107,0.15)" stroke="#FF6B6B" stroke-width="1"/>
-            <text x="505" y="28" text-anchor="middle" fill="#FF6B6B" font-size="9" font-weight="700" font-family="Source Sans 3">Declínio</text>
-            <text x="505" y="42" text-anchor="middle" fill="#FF6B6B" font-size="8" font-family="Source Sans 3">🐕 Abacaxi</text>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== MARCAS ========== -->
-  <section class="section" id="marca" data-theme="pink">
-    <div class="section-header">
-      <div class="section-icon">💎</div>
-      <div>
-        <h2>Unidade II — Marcas</h2>
-        <p>Conceito, natureza, dimensões, decisões e estratégias</p>
-      </div>
-    </div>
-
-    <div class="grid grid-2">
-      <div class="card">
-        <h3><span class="accent">✦</span> O que é Marca?</h3>
-        <div class="highlight-box">"Nome, design, termo, símbolo — ou combinação — que identifica bens ou serviços e os diferencia dos da concorrência." — AMA</div>
-        <p>É a promessa de uma empresa ao cliente (benefícios funcionais, emocionais, de autoexpressão e sociais). Funciona como núcleo do relacionamento com o cliente e plataforma para opções estratégicas — <strong style="color:var(--accent5)">Brand Equity</strong>.</p>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Natureza da Marca</h3>
-        <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-          <div style="background:rgba(244,114,182,0.08);padding:10px;border-radius:8px;border:1px solid rgba(244,114,182,0.2)">
-            <strong style="color:var(--accent5);font-size:0.82rem">Produto</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Diferencia tangíveis (Sony, Philips)</p>
-          </div>
-          <div style="background:rgba(167,139,250,0.08);padding:10px;border-radius:8px;border:1px solid rgba(167,139,250,0.2)">
-            <strong style="color:var(--accent4);font-size:0.82rem">Serviço</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Diferencia intangíveis (Unimed)</p>
-          </div>
-          <div style="background:rgba(78,205,196,0.08);padding:10px;border-radius:8px;border:1px solid rgba(78,205,196,0.2)">
-            <strong style="color:var(--accent2);font-size:0.82rem">Coletiva</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Família de bens/serviços (Sadia)</p>
-          </div>
-          <div style="background:rgba(255,230,109,0.08);padding:10px;border-radius:8px;border:1px solid rgba(255,230,109,0.2)">
-            <strong style="color:var(--accent3);font-size:0.82rem">Certificação</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Padrões de produção (selo ABIC)</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> 4 Dimensões da Marca</h3>
-        <ul>
-          <li><strong style="color:var(--accent5)">Reconhecimento</strong> — identidade do produto, visibilidade</li>
-          <li><strong style="color:var(--accent5)">Qualidade Percebida</strong> — inferências do consumidor sobre especificações</li>
-          <li><strong style="color:var(--accent5)">Associações</strong> — imagens, atributos, personalidade, símbolos</li>
-          <li><strong style="color:var(--accent5)">Fidelidade</strong> — relacionamento afetivo de longo prazo</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Formas da Marca</h3>
-        <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
-            <div style="font-size:1.5rem">🔤</div>
-            <strong style="font-size:0.82rem">Nominativa</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Identidade textual</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
-            <div style="font-size:1.5rem">🎨</div>
-            <strong style="font-size:0.82rem">Figurativa</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Imagens, símbolos</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
-            <div style="font-size:1.5rem">📐</div>
-            <strong style="font-size:0.82rem">Tridimensional</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Formato 3D do produto</p>
-          </div>
-          <div style="background:var(--bg2);padding:12px;border-radius:8px;text-align:center">
-            <div style="font-size:1.5rem">🔗</div>
-            <strong style="font-size:0.82rem">Mista</strong>
-            <p style="font-size:0.72rem;color:var(--text2)">Combinação das anteriores</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Loyalty Ladder -->
-      <div class="card">
-        <h3><span class="accent">✦</span> Escala de Fidelidade à Marca (Aaker)</h3>
-        <div class="loyalty-ladder">
-          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.3),rgba(244,114,182,0.05))">
-            <span class="level-num" style="color:var(--accent5)">5</span>
-            <span style="font-size:0.78rem"><strong>Devoto</strong> — Fanático pela marca</span>
-          </div>
-          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.22),rgba(244,114,182,0.04))">
-            <span class="level-num" style="color:var(--accent5)">4</span>
-            <span style="font-size:0.78rem"><strong>Fiel</strong> — Valoriza como parte de sua vida</span>
-          </div>
-          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.16),rgba(244,114,182,0.03))">
-            <span class="level-num" style="color:var(--accent5)">3</span>
-            <span style="font-size:0.78rem"><strong>Satisfeito c/ custos</strong> — Incorrerá custos ao trocar</span>
-          </div>
-          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.10),rgba(244,114,182,0.02))">
-            <span class="level-num" style="color:var(--accent5)">2</span>
-            <span style="font-size:0.78rem"><strong>Satisfeito</strong> — Sem razão para trocar</span>
-          </div>
-          <div class="loyalty-step" style="background:linear-gradient(90deg,rgba(244,114,182,0.06),rgba(244,114,182,0.01))">
-            <span class="level-num" style="color:var(--accent5)">1</span>
-            <span style="font-size:0.78rem"><strong>Sem fidelidade</strong> — Troca por preço</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3><span class="accent">✦</span> Decisões de Marca</h3>
-        <p style="margin-bottom:6px"><strong style="color:var(--accent5)">Patrocínio:</strong></p>
-        <ul>
-          <li>Marca do fabricante (nacional/regional)</li>
-          <li>Marca do distribuidor/revendedor</li>
-          <li>Marca licenciada</li>
-          <li>Fabricante + Revendedor combinadas</li>
-        </ul>
-        <p style="margin-top:10px;margin-bottom:6px"><strong style="color:var(--accent5)">Nomes:</strong></p>
-        <ul>
-          <li><strong>Individuais</strong> — fracasso não afeta empresa</li>
-          <li><strong>Família abrangentes</strong> — menor custo</li>
-          <li><strong>Famílias separadas</strong> — para produtos diferentes</li>
-          <li><strong>Nome da empresa + produto</strong> — (ex: montadoras)</li>
-        </ul>
-      </div>
-
-      <div class="card full-width">
-        <h3><span class="accent">✦</span> 5 Estratégias de Marca</h3>
-        <div class="grid grid-5" style="margin-top:10px">
-          <div style="background:rgba(244,114,182,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(244,114,182,0.2)">
-            <div style="font-size:1.3rem">📏</div>
-            <strong style="font-size:0.8rem;color:var(--accent5)">Extensão de Linha</strong>
-            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Novos itens na mesma categoria (sabores, tamanhos)</p>
-          </div>
-          <div style="background:rgba(167,139,250,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(167,139,250,0.2)">
-            <div style="font-size:1.3rem">🌱</div>
-            <strong style="font-size:0.8rem;color:var(--accent4)">Extensão de Marca</strong>
-            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Nome existente em novas categorias</p>
-          </div>
-          <div style="background:rgba(78,205,196,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(78,205,196,0.2)">
-            <div style="font-size:1.3rem">🏷️</div>
-            <strong style="font-size:0.8rem;color:var(--accent2)">Multimarcas</strong>
-            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Várias marcas na mesma categoria</p>
-          </div>
-          <div style="background:rgba(255,230,109,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(255,230,109,0.2)">
-            <div style="font-size:1.3rem">✨</div>
-            <strong style="font-size:0.8rem;color:var(--accent3)">Novas Marcas</strong>
-            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Nova categoria sem marca adequada</p>
-          </div>
-          <div style="background:rgba(255,107,107,0.08);padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(255,107,107,0.2)">
-            <div style="font-size:1.3rem">🤝</div>
-            <strong style="font-size:0.8rem;color:var(--accent1)">Nomes Combinados</strong>
-            <p style="font-size:0.7rem;color:var(--text2);margin-top:4px">Marcas duplas para fortalecer preferência</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</div>
-
-<div class="footer-note">
-  Mapa Mental Completo — MSPP — Prof. Rodrigo Cassimiro de Freitas · PUC Minas · 2024/1
+  </div>
 </div>
 
 <script>
-  const pills = document.querySelectorAll('.nav-pill');
-  const sections = document.querySelectorAll('.section');
+/* ══════════════════════════════════════════════════════
+   THREE.JS — NEURAL BACKGROUND
+══════════════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('three-bg');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.setClearColor(0x05070F,1);
+  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,1000);
+  camera.position.z=300;
+  const N=220;
+  const geo=new THREE.BufferGeometry();
+  const pos=new Float32Array(N*3);
+  for(let i=0;i<N;i++){pos[i*3]=(Math.random()-.5)*680;pos[i*3+1]=(Math.random()-.5)*480;pos[i*3+2]=(Math.random()-.5)*280;}
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  scene.add(new THREE.Points(geo,new THREE.PointsMaterial({color:0x2a3060,size:1.5,transparent:true,opacity:.55,sizeAttenuation:true})));
+  const lpos=[];
+  for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+    const dx=pos[i*3]-pos[j*3],dy=pos[i*3+1]-pos[j*3+1];
+    if(Math.sqrt(dx*dx+dy*dy)<85){lpos.push(pos[i*3],pos[i*3+1],pos[i*3+2],pos[j*3],pos[j*3+1],pos[j*3+2]);}
+  }
+  const lgeo=new THREE.BufferGeometry();
+  lgeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(lpos),3));
+  scene.add(new THREE.LineSegments(lgeo,new THREE.LineBasicMaterial({color:0x171d3a,transparent:true,opacity:.22})));
+  let t=0;
+  (function anim(){requestAnimationFrame(anim);t+=.0008;scene.rotation.y=t*.08;scene.rotation.x=Math.sin(t*.06)*.03;renderer.render(scene,camera);})();
+  window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+})();
 
-  function goTo(id) {
-    pills.forEach(p => p.classList.remove('active'));
-    sections.forEach(s => s.classList.remove('active'));
-    const target = document.getElementById(id);
-    if (target) {
-      target.classList.add('active');
-      const pill = document.querySelector(`[data-target="${id}"]`);
-      if (pill) pill.classList.add('active');
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+/* ══════════════════════════════════════════════════════
+   CURSOR
+══════════════════════════════════════════════════════ */
+const c$=document.getElementById('cur'),cr$=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c$.style.left=mx+'px';c$.style.top=my+'px';});
+(function ac(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cr$.style.left=rx+'px';cr$.style.top=ry+'px';requestAnimationFrame(ac);})();
+function setCH(on){document.body.classList[on?'add':'remove']('ch');}
+document.addEventListener('mouseover',e=>{if(e.target.closest('button,#mindmap .node-hit'))setCH(true);});
+document.addEventListener('mouseout',e=>{if(e.target.closest('button,#mindmap .node-hit'))setCH(false);});
+
+/* ══════════════════════════════════════════════════════
+   TOOLTIP
+══════════════════════════════════════════════════════ */
+const tt$=document.getElementById('ttip');
+function showTT(txt,color){tt$.textContent=txt;tt$.style.color=color;tt$.style.borderColor=color+'44';tt$.style.opacity='1';}
+function hideTT(){tt$.style.opacity='0';}
+document.addEventListener('mousemove',e=>{tt$.style.left=(e.clientX+16)+'px';tt$.style.top=(e.clientY-10)+'px';});
+
+/* ══════════════════════════════════════════════════════
+   ICON PATHS — PROFESSIONAL SVG (Lucide-style, 24×24)
+══════════════════════════════════════════════════════ */
+// Each icon is an array of {d, fill} objects
+const ICONS = {
+  // BookOpen
+  conceitos:[
+    {d:'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'},
+    {d:'M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 0 3-3h7z'},
+  ],
+  // Box / Package
+  produto:[
+    {d:'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'},
+    {d:'M3.27 6.96L12 12.01l8.73-5.05'},
+    {d:'M12 22.08V12'},
+  ],
+  // Layers
+  diferenciacao:[
+    {d:'M12 2L2 7l10 5 10-5-10-5z'},
+    {d:'M2 17l10 5 10-5'},
+    {d:'M2 12l10 5 10-5'},
+  ],
+  // Zap / Lightning
+  inovacao:[
+    {d:'M13 2L3 14h9l-1 8 10-12h-9l1-8z'},
+  ],
+  // Award / Medal
+  marcas:[
+    {d:'M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14z'},
+    {d:'M8.21 13.89L7 23l5-3 5 3-1.21-9.12'},
+  ],
+  // Root: Network/Share
+  root:[
+    {d:'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'},
+    {d:'M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'},
+    {d:'M18 20a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'},
+    {d:'M8.59 13.51l6.83 3.98'},
+    {d:'M15.41 6.51l-6.82 3.98'},
+  ],
+};
+
+function makeSVGIcon(id, color, size){
+  const scale = size/24;
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('transform',`scale(${scale}) translate(-12,-12)`);
+  (ICONS[id]||[]).forEach(({d})=>{
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',d);
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke',color);
+    p.setAttribute('stroke-width','1.8');
+    p.setAttribute('stroke-linecap','round');
+    p.setAttribute('stroke-linejoin','round');
+    g.appendChild(p);
+  });
+  return g;
+}
+
+/* ══════════════════════════════════════════════════════
+   COLORS
+══════════════════════════════════════════════════════ */
+const C={red:'#FF6B6B',teal:'#00E5CC',gold:'#FFD93D',vio:'#B77FFF',rose:'#FF7EB3'};
+const G={red:'rgba(255,107,107,.18)',teal:'rgba(0,229,204,.14)',gold:'rgba(255,217,61,.14)',vio:'rgba(183,127,255,.14)',rose:'rgba(255,126,179,.14)'};
+
+/* ══════════════════════════════════════════════════════
+   TREE DATA
+══════════════════════════════════════════════════════ */
+function leafDims(name){
+  const lines=name.split('\n');
+  const maxCh=Math.max(...lines.map(l=>l.length));
+  return {w:Math.max(58,maxCh*6.2+22),h:lines.length===1?24:32,lines};
+}
+
+const treeData={id:'root',name:'MSPP',ckey:'root',children:[
+  {id:'conceitos',name:'Conceitos\nBásicos',ckey:'red',icon:'conceitos',children:[
+    {id:'marketing',name:'Marketing',ckey:'red'},
+    {id:'mercado',name:'Mercado',ckey:'red'},
+    {id:'funcoes',name:'Funções\nMercad.',ckey:'red'},
+    {id:'microamb',name:'Microambiente',ckey:'red'},
+    {id:'macroamb',name:'Macroambiente',ckey:'red'},
+  ]},
+  {id:'produto',name:'Gestão do\nProduto',ckey:'teal',icon:'produto',children:[
+    {id:'concepcao',name:'Concepção &\nCategorias',ckey:'teal'},
+    {id:'niveis',name:'5 Níveis de\nProduto',ckey:'teal'},
+    {id:'classificacao',name:'Classificação',ckey:'teal'},
+    {id:'fases_dev',name:'Fases de\nDesenv.',ckey:'teal'},
+  ]},
+  {id:'diferenciacao',name:'Diferenciação\n& Linhas',ckey:'gold',icon:'diferenciacao',children:[
+    {id:'diferen',name:'Diferenciação',ckey:'gold'},
+    {id:'vrio',name:'Modelo VRIO',ckey:'gold'},
+    {id:'analise',name:'Análise de\nLinhas',ckey:'gold'},
+    {id:'extensao',name:'Extensão\nde Linha',ckey:'gold'},
+  ]},
+  {id:'inovacao',name:'Inovação\n& CVP',ckey:'vio',icon:'inovacao',children:[
+    {id:'inov_tipos',name:'Tipos de\nInovação',ckey:'vio'},
+    {id:'inov_dim',name:'Dimensões\nInovação',ckey:'vio'},
+    {id:'novos_prod',name:'Novos\nProdutos',ckey:'vio'},
+    {id:'cvp',name:'Ciclo de Vida\n(CVP)',ckey:'vio'},
+    {id:'bcg',name:'Matriz BCG',ckey:'vio'},
+  ]},
+  {id:'marcas',name:'Marcas',ckey:'rose',icon:'marcas',children:[
+    {id:'marca_conc',name:'Conceito &\nBrand Equity',ckey:'rose'},
+    {id:'marca_nat',name:'Natureza\nda Marca',ckey:'rose'},
+    {id:'marca_dim',name:'Dimensões\nda Marca',ckey:'rose'},
+    {id:'marca_form',name:'Formas\nda Marca',ckey:'rose'},
+    {id:'fidelidade',name:'Fidelidade\nà Marca',ckey:'rose'},
+    {id:'estrategia_m',name:'Estratégias\nde Marca',ckey:'rose'},
+  ]},
+]};
+
+/* ══════════════════════════════════════════════════════
+   PANEL CONTENT
+══════════════════════════════════════════════════════ */
+function ico(id,col,sz=20){
+  const s=`<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">`;
+  const paths=(ICONS[id]||[]).map(({d})=>`<path d="${d}"/>`).join('');
+  return s+paths+'</svg>';
+}
+
+const PC={
+marketing:{icon:'conceitos',title:'O que é Marketing?',sub:'Fundamentos e definição',ckey:'red',html:(c)=>`
+<div style="--c:${c}">
+<div class="pq">"Ciência e arte de explorar, criar e entregar valor para satisfazer necessidades de um mercado-alvo com lucro." — <strong>Kotler, 2010</strong></div>
+<div class="psec"><div class="plbl">Definição Acadêmica</div>
+<div class="pc">Disciplina das ciências gerenciais que estuda as relações no <strong>ambiente mercadológico</strong> — ambiência interna e externa. Foco central: <span style="color:${c}">surpreender o cliente</span>.</div></div>
+<div class="psec"><div class="plbl">O que o Marketing faz?</div><ul class="pul">
+<li>Identifica necessidades e desejos não realizados</li>
+<li>Define, mede e quantifica o tamanho do mercado</li>
+<li>Estima o potencial de lucro de cada segmento</li>
+<li>Conecta empresa com seus clientes-alvo com eficiência</li>
+</ul></div></div>`},
+
+mercado:{icon:'conceitos',title:'O que é Mercado?',sub:'Espaço de trocas mercadológicas',ckey:'red',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Conceito</div>
+<div class="pc">Espaço de negociações entre <strong>ofertadores</strong> e <strong>consumidores</strong>, com troca de produtos que atendam às necessidades mercadológicas.</div></div>
+<div class="psec"><div class="plbl">O que pode ser comercializado?</div>
+<div class="pg pg2">
+${[['Bens Físicos','Automóveis, computadores, eletrodomésticos'],['Serviços','Educação, saúde, consultoria'],['Pessoas','Atletas, artistas, celebridades'],['Locais','Nova York, Paris, Rio de Janeiro'],['Eventos','Olimpíadas, Copa, Rock in Rio'],['Ideias','Voluntariado, planejamento familiar']].map(([t,d])=>`<div class="pc"><strong style="color:${c}">${t}</strong><span style="color:var(--mu);font-size:.72rem;display:block">${d}</span></div>`).join('')}
+</div></div></div>`},
+
+funcoes:{icon:'conceitos',title:'Funções Mercadológicas',sub:'9 funções do Marketing',ckey:'red',html:(c)=>`
+<div style="--c:${c}">
+<div class="pg">
+${[['Produto','Desenvolvimento e gerenciamento'],['Precificação','Estratégias de preço'],['Distribuição','Localização e conveniência'],['Comunicação','CIM — Comunicação Integrada'],['Vendas','Fortalecimento da força de vendas'],['Estratégia','Planos e captura de oportunidades'],['Segmentação','Identificação e seleção de mercados'],['Canais','Estruturação dos canais com clientes'],['Marcas','Desenvolvimento de marcas'],['Crescimento','Performance mercadológica de longo prazo']].map(([t,d])=>`<div class="pc"><strong style="color:${c}">${t}</strong><span style="color:var(--mu);font-size:.72rem;display:block">${d}</span></div>`).join('')}
+</div></div>`},
+
+microamb:{icon:'conceitos',title:'Microambiente',sub:'Ambiente de Tarefa — gerenciável',ckey:'red',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">O que é?</div>
+<div class="pc">Conjunto de participantes <strong>imediatos</strong> envolvidos na produção e comercialização que podem ser <span style="color:${c}">gerenciados</span> pela empresa (mas não necessariamente controlados).</div></div>
+<div class="psec"><div class="plbl">6 Atores</div><ul class="pul">
+<li><strong>A Empresa</strong> e seus departamentos internos</li>
+<li><strong>Clientes-alvo</strong> — consumidores e usuários finais</li>
+<li><strong>Concorrência</strong> direta e indireta</li>
+<li><strong>Fornecedores</strong> de insumos e recursos</li>
+<li><strong>Distribuidores</strong> e revendedores</li>
+<li><strong>Parceiros</strong> estratégicos</li>
+</ul></div></div>`},
+
+macroamb:{icon:'conceitos',title:'Macroambiente',sub:'Ambiente Geral — incontrolável',ckey:'red',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">O que é?</div>
+<div class="pc">Fatores <strong>globais e incontroláveis</strong> que interferem na empresa. A organização reage e se adapta às suas modificações.</div></div>
+<div class="psec"><div class="plbl">6 Dimensões</div><div class="pg">
+${[['Demográfico',C.red,'Pop. mundial, composição etária, estruturas familiares, movimentações geográficas'],['Econômico',C.gold,'Distribuição de renda, poupança, endividamento, políticas de crédito, zonas de comércio'],['Sócio-Cultural',C.vio,'Valores, crenças, expressões artísticas, traços religiosos, subculturas'],['Natural',C.teal,'Escassez de recursos, custo de energia, poluição, regulações ambientais'],['Tecnológico',C.rose,'Inovações, aceleração tech, TIC, P&D, patentes e propriedade intelectual'],['Político-Legal','#38BDF8','Legislação, CDC, ANVISA, ANATEL, grupos de interesse da sociedade civil']].map(([t,cc,d])=>`<div class="pc" style="border-left:2px solid ${cc}"><strong style="color:${cc}">${t}</strong><span style="color:var(--mu);font-size:.72rem;display:block;line-height:1.45">${d}</span></div>`).join('')}
+</div></div></div>`},
+
+concepcao:{icon:'produto',title:'Concepção do Produto',sub:'O que é produto e suas categorias',ckey:'teal',html:(c)=>`
+<div style="--c:${c}">
+<div class="pq">"O produto é o primeiro e mais importante elemento do mix de marketing — o elemento-chave da oferta mercadológica."</div>
+<div class="psec"><div class="plbl">Definição</div>
+<div class="pc">Aquilo que pode ser comercializado a partir de uma ideia inovadora (espontânea ou via P&D) com intenção de <strong>gerar riquezas</strong>. Requer clareza do mercado, nível de competição e capacidade de satisfazer necessidades, desejos e interesses.</div></div>
+<div class="psec"><div class="plbl">Atributos do Produto</div>
+<div class="pdup">
+<div class="pdb" style="background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.2)"><h4 style="color:${c}">Tangíveis</h4><p>Design, forma, dimensões, embalagem física</p></div>
+<div class="pdb" style="background:rgba(183,127,255,.08);border:1px solid rgba(183,127,255,.2)"><h4 style="color:${C.vio}">Intangíveis</h4><p>Valores, estilo associado, percepções, status</p></div>
+</div></div></div>`},
+
+niveis:{icon:'produto',title:'5 Níveis de Produto',sub:'Pirâmide de Kotler',ckey:'teal',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Pirâmide dos Níveis — do núcleo ao potencial</div>
+<div class="pyrw">
+${[[5,'Produto Potencial','Melhorias futuras que diferenciarão','58%','rgba(0,229,204,.28)','#00E5CC'],
+   [4,'Produto Ampliado','Excede as expectativas dos consumidores','68%','rgba(0,229,204,.20)','#1bcebc'],
+   [3,'Produto Esperado','Atributos que os clientes esperam','78%','rgba(0,229,204,.13)','#36b7a8'],
+   [2,'Produto Básico','Características que atendem a necessidade básica','88%','rgba(0,229,204,.08)','#50a094'],
+   [1,'Benefício Central','O que realmente está sendo comprado?','98%','rgba(0,229,204,.04)','#6a8a80']
+].map(([n,t,d,w,bg,cc])=>`<div class="prw" style="width:${w};background:${bg};border:1px solid rgba(0,229,204,.18)"><span class="prn">Nível ${n}</span><strong style="color:${cc}">${t}</strong><br><span style="color:var(--mu);font-size:.67rem">${d}</span></div>`).join('')}
+</div></div></div>`},
+
+classificacao:{icon:'produto',title:'Classificação dos Produtos',sub:'Durabilidade, consumo e empresariais',ckey:'teal',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Por Durabilidade & Tangibilidade</div>
+<div class="pg">
+<div class="pc" style="border-left:2px solid ${C.teal}"><strong style="color:${C.teal}">Bens Duráveis</strong><span style="color:var(--mu);font-size:.72rem;display:block">Tangíveis, médio/longo prazo. Ex: notebook, geladeira</span></div>
+<div class="pc" style="border-left:2px solid ${C.gold}"><strong style="color:${C.gold}">Bens Não Duráveis</strong><span style="color:var(--mu);font-size:.72rem;display:block">Consumo imediato. Ex: alimentos, produtos de higiene</span></div>
+<div class="pc" style="border-left:2px solid ${C.rose}"><strong style="color:${C.rose}">Serviços</strong><span style="color:var(--mu);font-size:.72rem;display:block">Intangíveis, inseparáveis, variáveis e perecíveis</span></div>
+</div></div>
+<div class="psec"><div class="plbl">Bens de Consumo (B2C)</div><ul class="pul">
+<li><strong>Conveniência</strong> — compra frequente: básico, impulso, emergência</li>
+<li><strong>Compra Comparada</strong> — consumidor compara custo × benefício</li>
+<li><strong>Especialidade</strong> — características únicas/marca (Macbook, carros de luxo)</li>
+<li><strong>Não Procurados</strong> — consumidor não pensa em comprar (seguro de vida)</li>
+</ul></div>
+<div class="psec"><div class="plbl">Bens Empresariais (B2B)</div><ul class="pul">
+<li><strong>Bens de Capital</strong> — instalações e equipamentos produtivos</li>
+<li><strong>Materiais e Peças</strong> — matérias-primas e peças manufaturadas</li>
+<li><strong>Suprimentos e Serviços</strong> — curta duração, manutenção e consultoria</li>
+</ul></div></div>`},
+
+fases_dev:{icon:'produto',title:'Fases de Desenvolvimento',sub:'6 etapas do processo de produto',ckey:'teal',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Processo de Desenvolvimento — 6 Fases</div>
+<div class="fsw">
+${[['①','Oportunidade\ne Ideia'],['②','Especificação\ndo Projeto'],['③','Projeto\nConceitual'],['④','Configuração\ndo Produto'],['⑤','Desenhos\nDetalhados'],['⑥','Projeto p/\nFabricação']].map(([n,t],i)=>`<div class="fss" style="background:rgba(0,229,204,${.05+i*.03});border:1px solid rgba(0,229,204,${.18+i*.05})"><span class="fsn" style="color:${c}">${n}</span>${t}</div>`).join('')}
+</div></div>
+<div class="psec"><div class="plbl">Análise da Linha de Produtos</div>
+<div class="pc">O gerente deve saber a porcentagem de <strong>vendas e lucros</strong> de cada item e analisar o <strong>perfil de mercado</strong> comparativamente. O mapa de produtos é útil para planejar a estratégia de marketing.</div></div></div>`},
+
+diferen:{icon:'diferenciacao',title:'Diferenciação',sub:'Construindo vantagem competitiva',ckey:'gold',html:(c)=>`
+<div style="--c:${c}">
+<div class="pq">"Diferenças significativas são percebidas e valorizadas pelos consumidores."</div>
+<div class="psec"><div class="plbl">O que é?</div>
+<div class="pc">Ato de desenvolver um conjunto equilibrado de diferenças significativas — tangíveis e intangíveis — para distinguir a oferta da empresa em relação à <strong>concorrência</strong>.</div></div>
+<div class="psec"><div class="plbl">5 Formas de Diferenciação</div><ul class="pul">
+<li><strong style="color:${c}">Produto</strong> — atributos e melhorias que descomoditizam</li>
+<li><strong style="color:${c}">Serviço</strong> — padrão e qualidade dos serviços adicionais</li>
+<li><strong style="color:${c}">Recursos Humanos</strong> — confiabilidade, cortesia, credibilidade</li>
+<li><strong style="color:${c}">Canal</strong> — desempenho e serviços prestados ao consumidor</li>
+<li><strong style="color:${c}">Imagem</strong> — formação de imagem valorizada na mente do consumidor</li>
+</ul></div></div>`},
+
+vrio:{icon:'diferenciacao',title:'Modelo VRIO',sub:'Framework de eficácia na diferenciação',ckey:'gold',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Framework VRIO — Vantagem Competitiva Sustentável</div>
+<table class="vriot">
+<tr><th>Critério</th><th>Definição</th></tr>
+${[['V','Valor','#FFD93D','Recursos valiosos para o consumidor. Percebido na relação custo × benefício percebido.'],
+   ['R','Raridade','#F5A623','Exclusivo, escasso, não oferecido pelos concorrentes em nenhuma hipótese.'],
+   ['I','Imitabilidade','#E8843A','Imperfeitamente imitável — concorrentes não conseguem reproduzir as propriedades.'],
+   ['O','Organização','#D06040','Cultura da empresa de explorar recursos V+R+I. Capacidades únicas e intransferíveis.']
+].map(([l,n,cc,d])=>`<tr><td><span style="font-size:1.15rem;color:${cc};font-family:JetBrains Mono,monospace">${l}</span> ${n}</td><td>${d}</td></tr>`).join('')}
+</table></div>
+<div class="psec"><div class="plbl">Princípio</div>
+<div class="pc" style="border-left:2px solid ${c}">Quanto mais critérios V+R+I+O a empresa satisfaz simultaneamente, maior sua <span style="color:${c}">vantagem competitiva sustentável</span>.</div></div></div>`},
+
+analise:{icon:'diferenciacao',title:'Análise da Linha de Produtos',sub:'SWOT, perfil de mercado e vendas',ckey:'gold',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">3 Pilares da Análise</div><ul class="pul">
+<li><strong>Vendas e Lucros</strong> — % de vendas e lucros de cada item da linha</li>
+<li><strong>Perfil de Mercado</strong> — posicionamento vs. concorrência (mapa de produtos)</li>
+<li><strong>Análise SWOT</strong> — decidir: aumentar, manter, colher ou abandonar</li>
+</ul></div>
+<div class="psec"><div class="plbl">Matriz SWOT</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+${[['S','Strengths','Forças (internas)','rgba(0,229,204,.12)',C.teal],
+   ['W','Weaknesses','Fraquezas (internas)','rgba(255,107,107,.12)',C.red],
+   ['O','Opportunities','Oportunidades (externas)','rgba(255,217,61,.12)',C.gold],
+   ['T','Threats','Ameaças (externas)','rgba(183,127,255,.12)',C.vio]
+].map(([l,e,p,bg,cc])=>`<div style="padding:11px;border-radius:9px;background:${bg};text-align:center"><span style="font-family:JetBrains Mono;font-size:1.35rem;font-weight:700;color:${cc}">${l}</span><br><span style="font-size:.72rem;font-weight:600">${e}</span><br><span style="font-size:.64rem;color:var(--mu)">${p}</span></div>`).join('')}
+</div></div></div>`},
+
+extensao:{icon:'diferenciacao',title:'Extensão de Linha de Produto',sub:'Estratégias de ampliação e complementação',ckey:'gold',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Tipos de Ampliação de Linha</div><div class="pg">
+<div class="pc" style="border-left:2px solid ${C.teal}"><strong style="color:${C.teal}">↑ Mercado Acima</strong><span style="color:var(--mu);font-size:.72rem;display:block">Maiores margens, linha completa, posicionamento premium</span></div>
+<div class="pc" style="border-left:2px solid ${C.rose}"><strong style="color:${C.rose}">↓ Mercado Abaixo</strong><span style="color:var(--mu);font-size:.72rem;display:block">Bloquear concorrentes, mercado estagnado, crescimento</span></div>
+<div class="pc" style="border-left:2px solid ${C.vio}"><strong style="color:${C.vio}">↕ Ampliação Dupla</strong><span style="color:var(--mu);font-size:.72rem;display:block">Ambas as direções. ⚠ Risco de canibalização interna</span></div>
+</div></div>
+<div class="psec"><div class="plbl">Outras Estratégias</div><ul class="pul">
+<li><strong>Complementação</strong> — adicionar itens à faixa já existente (lacunas de mercado)</li>
+<li><strong>Modernização</strong> — renovação por etapas ou completa; inovação como motor</li>
+<li><strong>Promoção</strong> — selecionar itens para destacar (análise via BCG/CVP)</li>
+<li><strong>Redução</strong> — eliminar itens de baixo desempenho da linha</li>
+</ul></div></div>`},
+
+inov_tipos:{icon:'inovacao',title:'Tipos de Inovação',sub:'Disruptiva vs. Incremental',ckey:'vio',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Inovação × Invenção</div>
+<div class="pc" style="border-left:2px solid ${c}">A diferença fundamental? <strong style="color:${c}">O Mercado.</strong> Uma invenção é uma ideia nova, mas só é inovação quando o mercado a percebe e absorve como <em>geradora de valor</em>.</div></div>
+<div class="pdup">
+<div class="pdb" style="background:rgba(183,127,255,.1);border:1px solid rgba(183,127,255,.2)"><h4 style="color:${c}">💡 Disruptiva</h4><p>Quebra paradigmas, cria mercados inexistentes. Ex: internet, smartphones, IA generativa</p></div>
+<div class="pdb" style="background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.2)"><h4 style="color:${C.teal}">🔧 Incremental</h4><p>Evolui tecnologia existente. Ex: motores híbridos, versões melhoradas de produtos</p></div>
+</div>
+<div class="psec"><div class="plbl">Padronização</div><ul class="pul">
+<li>Tecnologias precisam adotar padrões para ampla difusão (WhatsApp, Instagram)</li>
+<li>Tecnologia inferior pode dominar pelo aprendizado de uso ou poder de mercado (VHS, QWERTY)</li>
+</ul></div></div>`},
+
+inov_dim:{icon:'inovacao',title:'Dimensões da Inovação',sub:'Manual de Oslo — OCDE, 1997',ckey:'vio',html:(c)=>`
+<div style="--c:${c}">
+<div class="pq">"Implementação de um produto novo ou melhorado, ou um processo, ou novo método de marketing ou organizacional." — Manual de Oslo</div>
+<div class="psec"><div class="plbl">5 Dimensões</div><div class="pg">
+${[['Novos Produtos','Bem ou serviço novo ou significativamente melhorado em características ou usos previstos'],
+   ['Novos Processos','Método de produção/distribuição novo ou melhorado: técnicas, equipamentos, softwares'],
+   ['Novos Mercados','Novo método de marketing: embalagem, posicionamento, promoção ou precificação'],
+   ['Novas Fontes MP','Capacidade de acessar recursos e insumos produtivos inovadores (descobertas científicas)'],
+   ['Novas Estruturas','Novo método organizacional nas práticas de negócios, local de trabalho ou relações externas']
+].map((([t,d])=>`<div class="pc"><strong style="color:${c}">${t}</strong><span style="color:var(--mu);font-size:.72rem;display:block;line-height:1.45">${d}</span></div>`)).join('')}
+</div></div>
+<div class="psec"><div class="plbl">Visão Schumpeteriana</div>
+<div class="pc">A empresa é um <strong>organismo vivo em permanente mutação</strong> capaz de transformar o mercado — o que define a inovação como <span style="color:${c}">mola propulsora da economia</span>.</div></div></div>`},
+
+novos_prod:{icon:'inovacao',title:'Desenvolvimento de Novos Produtos',sub:'Estratégias, sucessos e fracassos',ckey:'vio',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Formas de Lançar Novos Produtos</div>
+<div class="pg pg2">
+${['Produtos Originais','Melhorias/Modificações','Novas Marcas','Aquisição de Empresa','Aquisição de Patente','Parcerias/Cooperação','Aquisição de Licença'].map(t=>`<div class="pc" style="font-size:.74rem">▸ ${t}</div>`).join('')}
+</div></div>
+<div class="pdup">
+<div class="pdb" style="background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.2)"><h4 style="color:${C.teal}">✓ Causas de Sucesso</h4><p style="font-size:.72rem">Conceito claro · Exclusividade · Conhecimento do mercado · Benefícios superiores à concorrência</p></div>
+<div class="pdb" style="background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2)"><h4 style="color:${C.red}">✗ Causas de Fracasso</h4><p style="font-size:.72rem">Mercado superestimado · Projeto ruim · Posicionamento errado · Custo alto · Pesquisa insuficiente</p></div>
+</div>
+<div class="pc" style="text-align:center">
+<span style="font-family:JetBrains Mono;font-size:1.6rem;color:${c}">~40%</span><br>
+<span style="color:var(--mu);font-size:.74rem">dos novos produtos permanecem mais de 5 anos no mercado</span>
+</div></div>`},
+
+cvp:{icon:'inovacao',title:'Ciclo de Vida do Produto',sub:'CVP — 5 fases, estratégias e gráfico',ckey:'vio',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Gráfico do CVP — Volume de Vendas × Tempo</div>
+<div class="cvpw"><canvas id="cvpC" height="160"></canvas>
+<div class="cvpph">
+${[['Desenv.','#8B949E'],['Introdução',C.red],['Crescimento',C.gold],['Maturidade',C.teal],['Declínio',C.rose]].map(([l,cc])=>`<div class="cvppl" style="color:${cc}">${l}</div>`).join('')}
+</div></div></div>
+<div class="psec"><div class="plbl">Descrição das Fases</div><ul class="pul">
+<li><strong style="color:#8B949E">Desenvolvimento</strong> — criação do produto; sem receita, só investimento</li>
+<li><strong style="color:${C.red}">Introdução</strong> — lançamento; crescimento lento, incerteza de aceitação</li>
+<li><strong style="color:${C.gold}">Crescimento</strong> — aceitação rápida, expansão acelerada do mercado</li>
+<li><strong style="color:${C.teal}">Maturidade</strong> — produto consolidado, alta participação, crescimento baixo</li>
+<li><strong style="color:${C.rose}">Declínio</strong> — obsolescência, queda de participação e receita</li>
+</ul></div></div>`},
+
+bcg:{icon:'inovacao',title:'Matriz BCG',sub:'Boston Consulting Group — gestão de portfólio',ckey:'vio',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">4 Quadrantes — Eixos: Participação × Crescimento</div>
+
+<div style="display:flex;gap:6px;align-items:stretch;margin:8px 0 4px">
+  <!-- Y-axis label -->
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:22px;flex-shrink:0;gap:4px">
+    <span style="font-size:.6rem;color:var(--mu2);font-family:'JetBrains Mono',monospace;white-space:nowrap;transform:rotate(-90deg);display:inline-block;letter-spacing:.04em">CRESCIMENTO ↑</span>
+  </div>
+  <!-- Matrix -->
+  <div style="flex:1">
+    <!-- High growth row -->
+    <div style="display:flex;gap:5px;margin-bottom:5px">
+      <div class="bcgq" style="flex:1;background:rgba(255,217,61,.18)">
+        <span class="bcge">⭐</span>
+        <span class="bcgn" style="color:${C.gold}">Estrela</span>
+        <span class="bcgd">Alto crescimento + Alta participação. Líder que pode consumir muito caixa.</span>
+      </div>
+      <div class="bcgq" style="flex:1;background:rgba(183,127,255,.18)">
+        <span class="bcge">❓</span>
+        <span class="bcgn" style="color:${C.vio}">Oportunidade</span>
+        <span class="bcgd">Alto crescimento + Baixa participação. Retorno incerto; pode virar Estrela.</span>
+      </div>
+    </div>
+    <!-- Low growth row -->
+    <div style="display:flex;gap:5px">
+      <div class="bcgq" style="flex:1;background:rgba(0,229,204,.15)">
+        <span class="bcge">🐄</span>
+        <span class="bcgn" style="color:${C.teal}">Vaca Leiteira</span>
+        <span class="bcgd">Baixo crescimento + Alta participação. Mercado estável; gera caixa.</span>
+      </div>
+      <div class="bcgq" style="flex:1;background:rgba(255,107,107,.18)">
+        <span class="bcge">🐕</span>
+        <span class="bcgn" style="color:${C.red}">Abacaxi</span>
+        <span class="bcgd">Baixo crescimento + Baixa participação. Alto custo. Sugere retirada.</span>
+      </div>
+    </div>
+    <!-- X-axis -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px;padding:0 2px">
+      <span style="font-size:.58rem;color:var(--mu2);font-family:'JetBrains Mono',monospace">← ALTA PARTICIPAÇÃO</span>
+      <svg viewBox="0 0 80 10" width="60" height="10" style="flex-shrink:0">
+        <line x1="0" y1="5" x2="80" y2="5" stroke="rgba(238,242,255,.15)" stroke-width="1"/>
+        <polygon points="80,2 80,8 86,5" fill="rgba(238,242,255,.15)"/>
+      </svg>
+      <span style="font-size:.58rem;color:var(--mu2);font-family:'JetBrains Mono',monospace">BAIXA PARTICIPAÇÃO →</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="psec"><div class="plbl">CVP × BCG — relação direta</div>
+<div class="brid">
+<div class="brit" style="color:${C.vio}">Introdução<br><small>❓ Oportunidade</small></div>
+<div class="bria">→</div>
+<div class="brit" style="color:${C.gold}">Crescimento<br><small>⭐ Estrela</small></div>
+<div class="bria">→</div>
+<div class="brit" style="color:${C.teal}">Maturidade<br><small>🐄 Vaca</small></div>
+<div class="bria">→</div>
+<div class="brit" style="color:${C.red}">Declínio<br><small>🐕 Abacaxi</small></div>
+</div></div>
+
+<div class="psec"><div class="plbl">Princípios Estratégicos</div><ul class="pul">
+<li>Maior participação de mercado → <strong>menor custo relativo</strong> vs. concorrência</li>
+<li>Maior taxa de crescimento → <strong>maior necessidade de caixa</strong> para investimento</li>
+<li>Objetivo: usar caixa das Vacas para transformar Oportunidades em Estrelas</li>
+</ul></div></div>`},
+
+marca_conc:{icon:'marcas',title:'Conceito e Brand Equity',sub:'Definição, origem e promessa da marca',ckey:'rose',html:(c)=>`
+<div style="--c:${c}">
+<div class="pq">"Nome, design, termo, símbolo ou combinação que identifica bens/serviços e os diferencia dos da concorrência." — AMA, 2011</div>
+<div class="psec"><div class="plbl">Marca como Jornada (Aaker, 2015)</div>
+<div class="pc">A marca é a <strong>promessa</strong> de uma empresa em termos de benefícios funcionais, emocionais, de autoexpressão e sociais. Também é uma <em>jornada</em> — relação que evolui com base em percepções e experiências do cliente.</div></div>
+<div class="psec"><div class="plbl">Brand Equity</div>
+<div class="pc" style="border-left:2px solid ${c}">A marca funciona como núcleo de relacionamento com o cliente, plataforma para opções estratégicas e <span style="color:${c}">força que afeta o retorno sobre as ações</span>. Às vezes, a marca vale mais que todo o ativo da empresa.</div></div>
+<div class="psec"><div class="plbl">Funções da Marca</div><ul class="pul">
+<li>Identificar o fabricante e gerar segurança ao consumidor</li>
+<li>Demonstrar qualidade e facilitar pedidos</li>
+<li>Proteção legal de características exclusivas do produto</li>
+<li>Ajudar a empresa a segmentar o mercado</li>
+<li>Marcas fortes constroem imagem corporativa sólida</li>
+</ul></div></div>`},
+
+marca_nat:{icon:'marcas',title:'Natureza da Marca',sub:'4 tipos e suas funções',ckey:'rose',html:(c)=>`
+<div style="--c:${c}">
+<div class="pg">
+${[['Produto',C.rose,'Diferencia produtos tangíveis similares entre si. Ex: Sony vs Philips, Samsung vs LG'],
+   ['Serviço','#E06090','Diferencia serviços intangíveis similares. Ex: Unimed, Bradesco Saúde'],
+   ['Coletiva','#C84A70','Diferencia família de bens/serviços de uma organização. Ex: Sadia, Perdigão, Seara'],
+   ['Certificação','#B03250','Distinção por padrões de produção específicos. Ex: Selo ABIC para cafés, produtos orgânicos']
+].map(([t,cc,d])=>`<div class="pc" style="border-left:2px solid ${cc}"><strong style="color:${cc}">${t}</strong><span style="color:var(--mu);font-size:.72rem;display:block;line-height:1.45">${d}</span></div>`).join('')}
+</div>
+<div class="psec" style="margin-top:12px"><div class="plbl">Decisões de Patrocínio</div><ul class="pul">
+<li>Marca do <strong>fabricante</strong> (nacional ou regional)</li>
+<li>Marca do <strong>distribuidor</strong> (private label)</li>
+<li>Marca <strong>licenciada</strong></li>
+<li>Marca <strong>combinada</strong>: fabricante + revendedor</li>
+</ul></div></div>`},
+
+marca_dim:{icon:'marcas',title:'Dimensões da Marca',sub:'4 dimensões do valor de marca',ckey:'rose',html:(c)=>`
+<div style="--c:${c}">
+<div class="pg">
+${[['Reconhecimento','Identidade do produto, visibilidade. Função primária: ser reconhecida pelo consumidor'],
+   ['Qualidade Percebida','Inferências que permitem ao consumidor associar características às especificações divulgadas'],
+   ['Associações','Imagens, atributos, situações, personalidade de marca e símbolos vinculados à marca'],
+   ['Fidelidade','Relacionamento afetivo de longo prazo entre cliente e marca. Ex: fanáticos da Apple, Harley-Davidson']
+].map(([t,d])=>`<div class="pc" style="border-left:2px solid ${c}"><strong style="color:${c}">${t}</strong><span style="color:var(--mu);font-size:.72rem;display:block;line-height:1.45">${d}</span></div>`).join('')}
+</div>
+<div class="psec" style="margin-top:12px"><div class="plbl">Peso Reputacional</div>
+<div class="pc">Marcas fortes são <strong>ativos estratégicos</strong> que influenciam decisões financeiras e de investimento. O valor da marca pode superar todo o ativo tangível da empresa.</div></div></div>`},
+
+marca_form:{icon:'marcas',title:'Formas da Marca',sub:'4 formas de apresentação',ckey:'rose',html:(c)=>`
+<div style="--c:${c}">
+<div class="stg">
+${[
+  [ico('conceitos',C.rose,20),'Nominativa','Identidade textual e substantiva. Apenas o nome como elemento distintivo.'],
+  [ico('produto',C.rose,20),'Figurativa','Imagens, símbolos ou ilustrações. Reconhecimento visual sem necessidade de texto.'],
+  [ico('diferenciacao',C.rose,20),'Tridimensional','Formato 3D do produto. A forma em si identifica e distingue o produto ofertado.'],
+  [ico('marcas',C.rose,20),'Mista','Conjunção das categorias anteriores — nome + símbolo + forma combinados.']
+].map(([i,n,d])=>`<div class="stc" style="background:rgba(255,126,179,.06)"><div class="sti">${i}</div><span class="stn" style="color:${c}">${n}</span><span class="std">${d}</span></div>`).join('')}
+</div>
+<div class="psec"><div class="plbl">Decisões de Nome</div><ul class="pul">
+<li><strong>Individuais</strong> — fracasso de um não contamina a empresa</li>
+<li><strong>Família abrangente</strong> — menor custo de desenvolvimento</li>
+<li><strong>Famílias separadas</strong> — para produtos muito diferentes</li>
+<li><strong>Nome da empresa + produto</strong> — ex: montadoras</li>
+</ul></div></div>`},
+
+fidelidade:{icon:'marcas',title:'Fidelidade à Marca',sub:'Escada de 5 níveis — Aaker, 2001',ckey:'rose',html:(c)=>`
+<div style="--c:${c}">
+<div class="psec"><div class="plbl">Escada da Fidelidade — do mais baixo ao mais alto</div>
+<div class="ladw">
+${[[5,'Devoto (Fanático)','Máxima fidelidade. Cliente completamente devotado. Ex: Apple, Harley-Davidson','rgba(255,126,179,.28)',C.rose],
+   [4,'Fiel','Valoriza a marca e a considera parte de sua vida. Não pensa em trocar','rgba(255,126,179,.20)','#F06090'],
+   [3,'Satisfeito c/ Custo','Satisfeito e incorrerá em custos ao trocar de marca','rgba(255,126,179,.13)','#C84870'],
+   [2,'Satisfeito','Satisfeito, mas sem razão especial para ficar ou trocar','rgba(255,126,179,.08)','#A03050'],
+   [1,'Sem Fidelidade','Troca de marca, especialmente por razão de preço','rgba(255,126,179,.04)','#8B949E']
+].map(([n,t,d,bg,cc])=>`<div class="lads" style="background:${bg}"><span class="ladn" style="color:${cc}">${n}</span><div><strong style="color:${cc};font-size:.78rem">${t}</strong><br><span style="color:var(--mu);font-size:.7rem">${d}</span></div></div>`).join('')}
+</div></div></div>`},
+
+estrategia_m:{icon:'marcas',title:'Estratégias de Marca',sub:'5 decisões estratégicas disponíveis',ckey:'rose',html:(c)=>`
+<div style="--c:${c}">
+<div class="pg">
+${[['Extensão de Linha',C.rose,'Lançar itens adicionais na mesma categoria sob o mesmo nome (novos sabores, tamanhos, embalagens)'],
+   ['Extensão de Marca','#E06090','Usar nome existente para lançar produtos em outras categorias (aproveita o equity)'],
+   ['Multimarcas','#C84A70','Lançar marcas adicionais na mesma categoria. Risco: nenhuma fica particularmente rentável'],
+   ['Novas Marcas','#B03250','Quando nova categoria não se encaixa em nenhum nome existente. Começa do zero'],
+   ['Nomes Combinados','#90203A','Duas ou mais marcas conhecidas combinadas em uma oferta para fortalecer preferência (co-branding)']
+].map(([t,cc,d])=>`<div class="pc" style="border-left:2px solid ${cc}"><strong style="color:${cc}">${t}</strong><span style="color:var(--mu);font-size:.72rem;display:block;line-height:1.45">${d}</span></div>`).join('')}
+</div>
+<div class="psec" style="margin-top:12px"><div class="plbl">Desafios das Decisões de Marca</div>
+<div class="pc">A marca serve para identificar o fabricante, gerar <strong>segurança</strong>, demonstrar <strong>qualidade</strong>, facilitar pedidos e garantir <strong>proteção legal</strong>. Marcas fortes segmentam o mercado e constroem imagem corporativa sólida.</div></div></div>`},
+};
+
+/* ══════════════════════════════════════════════════════
+   D3 RADIAL TREE — FIXED GEOMETRY
+══════════════════════════════════════════════════════ */
+let svg, gMain, zoomBeh;
+const ROOT_R=70, BRANCH_R=44;
+
+function toXY(angle, r){
+  return [r*Math.cos(angle-Math.PI/2), r*Math.sin(angle-Math.PI/2)];
+}
+
+// Returns the point on the edge of a source node (circle) in the direction of target
+function edgePt(srcX,srcY,tgtX,tgtY,r){
+  const dx=tgtX-srcX, dy=tgtY-srcY, d=Math.sqrt(dx*dx+dy*dy);
+  if(d<0.001)return[srcX,srcY];
+  return[srcX+dx/d*r, srcY+dy/d*r];
+}
+
+// Returns the point on the edge of a target (ellipse approximation for pills)
+function edgePtEllipse(srcX,srcY,tgtX,tgtY,a,b){
+  const dx=srcX-tgtX, dy=srcY-tgtY, d=Math.sqrt(dx*dx+dy*dy);
+  if(d<0.001)return[tgtX,tgtY];
+  const nx=dx/d, ny=dy/d;
+  const t=1/Math.sqrt((nx/a)**2+(ny/b)**2);
+  return[tgtX+nx*t, tgtY+ny*t];
+}
+
+function initMap(){
+  const wrap=document.getElementById('mapw');
+  const W=wrap.clientWidth, H=wrap.clientHeight;
+  const cx=W/2, cy=H/2;
+  const minDim=Math.min(W,H);
+  const radius=minDim/2*(W<500?0.70:0.80);
+
+  svg=d3.select('#mindmap').attr('width',W).attr('height',H);
+
+  const defs=svg.append('defs');
+
+  // Glow filter
+  const gf=defs.append('filter').attr('id','glow').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+  gf.append('feGaussianBlur').attr('stdDeviation','5').attr('result','blur');
+  const fm=gf.append('feMerge');
+  fm.append('feMergeNode').attr('in','blur');
+  fm.append('feMergeNode').attr('in','SourceGraphic');
+
+  // Radial gradients per branch
+  Object.entries({red:C.red,teal:C.teal,gold:C.gold,vio:C.vio,rose:C.rose}).forEach(([k,col])=>{
+    const rg=defs.append('radialGradient').attr('id','rg-'+k);
+    rg.append('stop').attr('offset','0%').attr('stop-color',col).attr('stop-opacity',.32);
+    rg.append('stop').attr('offset','100%').attr('stop-color',col).attr('stop-opacity',.04);
+  });
+
+  gMain=svg.append('g'); // No initial transform — zoom will set it
+
+  zoomBeh=d3.zoom().scaleExtent([.28,3.5]).on('zoom',(ev)=>{
+    gMain.attr('transform', ev.transform);
+  });
+
+  // Initialize centered — D3 now knows the true starting state
+  const initT=d3.zoomIdentity.translate(cx,cy);
+  svg.call(zoomBeh)
+    .call(zoomBeh.transform, initT)
+    .on('dblclick.zoom',null);
+
+  // Tree layout
+  const tree=d3.tree()
+    .size([2*Math.PI, radius])
+    .separation((a,b)=>(a.parent===b.parent?1.3:2.6)/a.depth);
+
+  // Add leaf dims to data before hierarchy
+  function addDims(node){
+    if(node.children) node.children.forEach(addDims);
+    else node._dims=leafDims(node.name);
+    return node;
+  }
+  const root=d3.hierarchy(addDims(JSON.parse(JSON.stringify(treeData))));
+  tree(root);
+
+  // Propagate dims back
+  root.descendants().forEach(d=>{
+    if(d.data._dims) d._dims=d.data._dims;
+  });
+
+  // ── LINKS ──────────────────────────────────────────
+  const linkG=gMain.append('g').attr('class','links');
+
+  root.links().forEach(link=>{
+    const sd=link.source, td=link.target;
+    const [sx,sy]=toXY(sd.x,sd.y);
+    const [tx,ty]=toXY(td.x,td.y);
+
+    const srcR = sd.depth===0 ? ROOT_R : BRANCH_R;
+
+    let endPt;
+    if(td.depth===1){
+      endPt=edgePt(tx,ty,sx,sy,BRANCH_R);
+    } else {
+      const dims=td._dims||{w:60,h:26};
+      endPt=edgePtEllipse(sx,sy,tx,ty,dims.w/2+2,dims.h/2+2);
+    }
+    const startPt=edgePt(sx,sy,tx,ty,srcR);
+
+    const color=td.depth===1 ? C[td.data.ckey]||'#fff' : C[td.data.ckey]||'#fff';
+
+    // Control pt: slight inward pull
+    // Control point: midpoint with slight inward pull (20px toward origin)
+    const rawCpx=(startPt[0]+endPt[0])/2, rawCpy=(startPt[1]+endPt[1])/2;
+    const cpLen=Math.sqrt(rawCpx*rawCpx+rawCpy*rawCpy)||1;
+    const pull=Math.min(18, cpLen*0.07);
+    const cpx=rawCpx*(1-pull/cpLen), cpy=rawCpy*(1-pull/cpLen);
+    const pathD=`M${startPt[0].toFixed(2)},${startPt[1].toFixed(2)} Q${cpx.toFixed(2)},${cpy.toFixed(2)} ${endPt[0].toFixed(2)},${endPt[1].toFixed(2)}`;
+
+    const path=linkG.append('path')
+      .attr('fill','none')
+      .attr('stroke',color)
+      .attr('stroke-width',td.depth===1?1.8:1.2)
+      .attr('stroke-opacity',td.depth===1?.5:.3)
+      .attr('stroke-linecap','round');
+
+    const len=50; // approximate
+    path.attr('d',pathD);
+    try{
+      const tl=path.node().getTotalLength();
+      path.attr('stroke-dasharray',tl).attr('stroke-dashoffset',tl)
+        .transition().duration(800).delay(250+td.depth*180+Math.random()*320)
+        .attr('stroke-dashoffset',0);
+    }catch(e){/* skip animation if error */}
+  });
+
+  // ── NODES ──────────────────────────────────────────
+  const nodeG=gMain.append('g').attr('class','nodes');
+
+  root.descendants().forEach(d=>{
+    const [x,y]=toXY(d.x,d.y);
+    const ng=nodeG.append('g')
+      .attr('transform',`translate(${x.toFixed(2)},${y.toFixed(2)})`)
+      .attr('opacity',0)
+      .attr('class','node-hit')
+      .style('cursor','none');
+
+    if(d.depth===0){
+      // ── ROOT ───────────────────────────────────────
+      ng.append('circle').attr('r',ROOT_R).attr('fill','rgba(255,255,255,.025)').attr('stroke','rgba(255,255,255,.2)').attr('stroke-width',1.5).attr('filter','url(#glow)');
+      ng.append('circle').attr('r',ROOT_R-9).attr('fill','rgba(255,255,255,.015)').attr('stroke','rgba(255,255,255,.08)').attr('stroke-width',1);
+
+      // Small icon
+      const iconG=ng.append('g').attr('transform','translate(0,-28)scale(0.6)translate(-12,-12)');
+      (ICONS.root||[]).forEach(({d:pd})=>{
+        iconG.append('path').attr('d',pd).attr('fill','none').attr('stroke','rgba(255,255,255,.4)').attr('stroke-width','1.8').attr('stroke-linecap','round').attr('stroke-linejoin','round');
+      });
+
+      // Full title — equal weight across 3 lines
+      ng.append('text').text('Nivelamento,')
+        .attr('text-anchor','middle').attr('y',-9)
+        .attr('fill','rgba(255,255,255,.92)').attr('font-family',"'Syne',sans-serif").attr('font-weight','700').attr('font-size','9.5');
+      ng.append('text').text('Gestão de Produtos')
+        .attr('text-anchor','middle').attr('y',4)
+        .attr('fill','rgba(255,255,255,.92)').attr('font-family',"'Syne',sans-serif").attr('font-weight','700').attr('font-size','9.5');
+      ng.append('text').text('e Marcas')
+        .attr('text-anchor','middle').attr('y',17)
+        .attr('fill','rgba(255,255,255,.92)').attr('font-family',"'Syne',sans-serif").attr('font-weight','700').attr('font-size','9.5');
+      // Subtitle
+      ng.append('text').text('Mapa Mental')
+        .attr('text-anchor','middle').attr('y',30)
+        .attr('fill','rgba(238,242,255,.35)').attr('font-family',"'DM Sans',sans-serif").attr('font-size','7').attr('letter-spacing','0.06em');
+
+      ng.on('click',()=>openPanel('marcas'));
+
+    } else if(d.depth===1){
+      // ── BRANCH ─────────────────────────────────────
+      const color=C[d.data.ckey]||'#fff';
+      const ckey=d.data.ckey;
+
+      ng.append('circle').attr('r',BRANCH_R)
+        .attr('fill',`url(#rg-${ckey})`)
+        .attr('stroke',color).attr('stroke-width',1.5).attr('stroke-opacity',.7)
+        .attr('filter','url(#glow)');
+
+      // SVG icon at top of circle
+      const iconId=d.data.icon||ckey;
+      const iScale=0.72; // 17.3px from 24px
+      const iconWrap=ng.append('g')
+        .attr('transform',`translate(0,-16)scale(${iScale})translate(-12,-12)`);
+      (ICONS[iconId]||[]).forEach(({d:pd})=>{
+        iconWrap.append('path').attr('d',pd).attr('fill','none').attr('stroke',color)
+          .attr('stroke-width','1.8').attr('stroke-linecap','round').attr('stroke-linejoin','round');
+      });
+
+      // Text lines
+      const lines=d.data.name.split('\n');
+      const baseY = lines.length===1 ? 6 : 0;
+      lines.forEach((line,i)=>{
+        ng.append('text').text(line)
+          .attr('text-anchor','middle')
+          .attr('y', baseY + i*13)
+          .attr('fill',color).attr('font-family',"'Syne',sans-serif")
+          .attr('font-weight','700').attr('font-size','9.5');
+      });
+
+      ng.on('mouseenter',function(){
+          setCH(true);
+          d3.select(this).select('circle').transition().duration(180).attr('r',BRANCH_R+5).attr('stroke-opacity',1);
+          showTT(d.data.name.replace('\n',' '), color);
+        })
+        .on('mouseleave',function(){
+          setCH(false);
+          d3.select(this).select('circle').transition().duration(180).attr('r',BRANCH_R).attr('stroke-opacity',.7);
+          hideTT();
+        })
+        .on('click',()=>openPanel(d.data.id));
+
+    } else {
+      // ── LEAF (PILL) ─────────────────────────────────
+      const color=C[d.data.ckey]||'#fff';
+      const dims=d._dims||leafDims(d.data.name);
+      const {w,h,lines}=dims;
+      const rx=h/2;
+
+      ng.append('rect')
+        .attr('x',-w/2).attr('y',-h/2)
+        .attr('width',w).attr('height',h)
+        .attr('rx',rx).attr('ry',rx)
+        .attr('fill','rgba(255,255,255,.03)')
+        .attr('stroke',color).attr('stroke-width',1).attr('stroke-opacity',.4);
+
+      const textBase = lines.length===1 ? 4 : -(lines.length-1)*5.5;
+      lines.forEach((line,i)=>{
+        ng.append('text').text(line)
+          .attr('text-anchor','middle')
+          .attr('y', textBase + i*11)
+          .attr('fill','rgba(238,242,255,.82)')
+          .attr('font-family',"'DM Sans',sans-serif")
+          .attr('font-size','8').attr('font-weight','500');
+      });
+
+      ng.on('mouseenter',function(){
+          setCH(true);
+          d3.select(this).select('rect').transition().duration(160)
+            .attr('fill','rgba(255,255,255,.07)').attr('stroke-opacity',.9);
+          showTT(d.data.name.replace('\n',' '), color);
+        })
+        .on('mouseleave',function(){
+          setCH(false);
+          d3.select(this).select('rect').transition().duration(160)
+            .attr('fill','rgba(255,255,255,.03)').attr('stroke-opacity',.4);
+          hideTT();
+        })
+        .on('click',()=>openPanel(d.data.id));
+    }
+
+    // Entrance animation
+    ng.transition().duration(550).delay(180+d.depth*220+Math.random()*380).attr('opacity',1);
+  });
+
+  buildLegend();
+}
+
+/* ══════════════════════════════════════════════════════
+   PANEL
+══════════════════════════════════════════════════════ */
+const overlay=document.getElementById('panel-overlay');
+const isMobile=()=>window.innerWidth<=700;
+
+function openPanel(id){
+  const data=PC[id]; if(!data) return;
+  const color=C[data.ckey]||'#fff';
+
+  // Icon
+  const icoEl=document.getElementById('pico');
+  icoEl.innerHTML='';
+  const svgEl=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svgEl.setAttribute('viewBox','0 0 24 24');
+  svgEl.setAttribute('width','22');svgEl.setAttribute('height','22');
+  svgEl.setAttribute('fill','none');svgEl.setAttribute('stroke',color);
+  svgEl.setAttribute('stroke-width','1.8');svgEl.setAttribute('stroke-linecap','round');svgEl.setAttribute('stroke-linejoin','round');
+  (ICONS[data.icon]||[]).forEach(({d})=>{
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',d); svgEl.appendChild(p);
+  });
+  icoEl.appendChild(svgEl);
+
+  document.getElementById('ptitle').textContent=data.title;
+  document.getElementById('ptitle').style.color=color;
+  document.getElementById('psub').textContent=data.sub;
+
+  const body=document.getElementById('pbody');
+  body.style.opacity='1';
+  body.style.transition='none';
+  body.innerHTML=data.html(color);
+  body.scrollTop=0;
+
+  document.getElementById('panel').classList.add('open');
+
+  // Mobile: show overlay and lock scroll
+  if(isMobile()){
+    overlay.classList.add('show');
+    document.body.style.overflow='hidden';
+  } else {
+    // Desktop: fade in content
+    body.style.opacity='0';
+    requestAnimationFrame(()=>{
+      body.style.transition='opacity .24s';
+      body.style.opacity='1';
+    });
+  }
+
+  if(id==='cvp') setTimeout(drawCVP,120);
+}
+
+function closePanel(){
+  document.getElementById('panel').classList.remove('open');
+  overlay.classList.remove('show');
+  document.body.style.overflow='';
+}
+document.getElementById('pclose').addEventListener('click',closePanel);
+overlay.addEventListener('click',closePanel);
+
+/* ══════════════════════════════════════════════════════
+   CVP CHART — CORRECTED: proper S-curve rise → peak → fall
+══════════════════════════════════════════════════════ */
+function drawCVP(){
+  const canvas=document.getElementById('cvpC');
+  if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth-0;
+  const H=160;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const pad={t:14,r:10,b:8,l:30};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+
+  // Phase boundaries (normalized 0-1)
+  const phases=[
+    {start:0,    end:0.12, color:'#8B949E', label:'Desenv.'},
+    {start:0.12, end:0.32, color:C.red,     label:'Introdução'},
+    {start:0.32, end:0.60, color:C.gold,    label:'Crescimento'},
+    {start:0.60, end:0.78, color:C.teal,    label:'Maturidade'},
+    {start:0.78, end:1.00, color:C.rose,    label:'Declínio'},
+  ];
+
+  // CVP points: (t, sales) normalized — correct S-curve
+  const pts=[
+    // Development: flat near zero
+    [0.00,0.01],[0.04,0.01],[0.08,0.02],[0.12,0.03],
+    // Introduction: slow start
+    [0.17,0.06],[0.22,0.11],[0.27,0.18],[0.32,0.27],
+    // Growth: rapid acceleration
+    [0.38,0.42],[0.44,0.60],[0.50,0.76],[0.56,0.88],[0.60,0.95],
+    // Maturity: peak plateau
+    [0.64,0.99],[0.68,1.00],[0.72,1.00],[0.75,0.99],[0.78,0.97],
+    // Decline: gradual fall
+    [0.83,0.88],[0.88,0.74],[0.92,0.58],[0.96,0.42],[1.00,0.28],
+  ];
+
+  function ptToCanvas(t,v){
+    return [pad.l+t*cw, pad.t+(1-v)*ch];
+  }
+
+  // Draw phase background bands
+  phases.forEach(ph=>{
+    const x1=pad.l+ph.start*cw, x2=pad.l+ph.end*cw;
+    const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+    grad.addColorStop(0,ph.color+'18');
+    grad.addColorStop(1,ph.color+'04');
+    ctx.fillStyle=grad;
+    ctx.fillRect(x1,pad.t,x2-x1,ch);
+  });
+
+  // Phase separator lines
+  [0.12,0.32,0.60,0.78].forEach(t=>{
+    const x=pad.l+t*cw;
+    ctx.strokeStyle='rgba(255,255,255,.07)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ch);ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // Axes
+  ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);
+  ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+
+  // Y axis label
+  ctx.save();ctx.translate(11,pad.t+ch/2);ctx.rotate(-Math.PI/2);
+  ctx.fillStyle='rgba(238,242,255,.28)';ctx.font=`8px 'DM Sans',sans-serif`;ctx.textAlign='center';
+  ctx.fillText('VENDAS',0,0);ctx.restore();
+
+  // Convert points to canvas coords
+  const canvasPts=pts.map(([t,v])=>ptToCanvas(t,v));
+
+  // Draw filled area (gradient)
+  const areaGrad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+  areaGrad.addColorStop(0,'rgba(0,229,204,.22)');
+  areaGrad.addColorStop(0.6,'rgba(255,217,61,.12)');
+  areaGrad.addColorStop(1,'rgba(0,229,204,.02)');
+
+  ctx.beginPath();
+  ctx.moveTo(canvasPts[0][0],pad.t+ch);
+  ctx.lineTo(canvasPts[0][0],canvasPts[0][1]);
+  spline(ctx,canvasPts);
+  ctx.lineTo(canvasPts[canvasPts.length-1][0],pad.t+ch);
+  ctx.closePath();
+  ctx.fillStyle=areaGrad;
+  ctx.fill();
+
+  // Draw curve (multi-color per phase)
+  phases.forEach(ph=>{
+    const x1=pad.l+ph.start*cw, x2=pad.l+ph.end*cw;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x1,0,x2-x1,H);
+    ctx.clip();
+
+    ctx.beginPath();
+    ctx.moveTo(canvasPts[0][0],canvasPts[0][1]);
+    spline(ctx,canvasPts);
+    ctx.strokeStyle=ph.color;
+    ctx.lineWidth=2.5;
+    ctx.lineJoin='round';
+    ctx.lineCap='round';
+    ctx.setLineDash([]);
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  // Phase color dots on top of separators
+  [
+    [0.06,'#8B949E'],[0.22,C.red],[0.46,C.gold],[0.69,C.teal],[0.89,C.rose]
+  ].forEach(([t,col])=>{
+    const [cx2,cy2]=ptToCanvas(t, pts.find(([pt])=>Math.abs(pt-t)<0.06)?.[1]||0.5);
+    ctx.beginPath();ctx.arc(cx2,cy2,3,0,Math.PI*2);
+    ctx.fillStyle=col;ctx.fill();
+  });
+}
+
+function spline(ctx, pts){
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[Math.max(0,i-1)];
+    const p1=pts[i];
+    const p2=pts[i+1];
+    const p3=pts[Math.min(pts.length-1,i+2)];
+    const cp1x=p1[0]+(p2[0]-p0[0])/6;
+    const cp1y=p1[1]+(p2[1]-p0[1])/6;
+    const cp2x=p2[0]-(p3[0]-p1[0])/6;
+    const cp2y=p2[1]-(p3[1]-p1[1])/6;
+    ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2[0],p2[1]);
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   LEGEND + ZOOM
+══════════════════════════════════════════════════════ */
+function buildLegend(){
+  const leg=document.getElementById('leg');
+  [[C.red,'Conceitos Básicos'],[C.teal,'Gestão do Produto'],[C.gold,'Diferenciação & Linhas'],[C.vio,'Inovação & CVP'],[C.rose,'Marcas']]
+    .forEach(([c,l])=>{
+      const el=document.createElement('div');
+      el.className='li';
+      el.innerHTML=`<div class="ld" style="background:${c}"></div><span>${l}</span>`;
+      leg.appendChild(el);
+    });
+}
+
+document.getElementById('zin').addEventListener('click',()=>svg.transition().duration(300).call(zoomBeh.scaleBy,1.35));
+document.getElementById('zout').addEventListener('click',()=>svg.transition().duration(300).call(zoomBeh.scaleBy,0.74));
+document.getElementById('zrst').addEventListener('click',()=>{
+  const wrap=document.getElementById('mapw');
+  const t=d3.zoomIdentity.translate(wrap.clientWidth/2,wrap.clientHeight/2);
+  svg.transition().duration(500).call(zoomBeh.transform,t);
+});
+
+/* ══════════════════════════════════════════════════════
+   MOBILE — Touch swipe-to-close
+══════════════════════════════════════════════════════ */
+// Touch swipe-to-close: drag panel down to dismiss
+(function(){
+  let startY=0, startScroll=0, dragging=false;
+  const handle=document.getElementById('pdrag');
+  const panelEl=document.getElementById('panel');
+  const bodyEl=document.getElementById('pbody');
+
+  function onTouchStart(e){
+    startY=e.touches[0].clientY;
+    startScroll=bodyEl.scrollTop;
+    dragging=true;
+  }
+  function onTouchMove(e){
+    if(!dragging)return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy>0 && startScroll<=0){
+      panelEl.style.transition='none';
+      panelEl.style.transform=`translateY(${Math.min(dy*0.55,220)}px)`;
+      if(e.cancelable) e.preventDefault();
+    }
+  }
+  function onTouchEnd(e){
+    if(!dragging)return;
+    dragging=false;
+    const dy=e.changedTouches[0].clientY-startY;
+    panelEl.style.transition='';
+    if(dy>90 && bodyEl.scrollTop<=0){
+      panelEl.style.transform='';
+      closePanel();
+    } else {
+      panelEl.style.transform='';
     }
   }
 
-  pills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      goTo(pill.dataset.target);
-    });
-  });
+  handle.addEventListener('touchstart',onTouchStart,{passive:true});
+  handle.addEventListener('touchmove',onTouchMove,{passive:false});
+  handle.addEventListener('touchend',onTouchEnd,{passive:true});
+  bodyEl.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;startScroll=bodyEl.scrollTop;dragging=true;},{passive:true});
+  bodyEl.addEventListener('touchmove',onTouchMove,{passive:false});
+  bodyEl.addEventListener('touchend',onTouchEnd,{passive:true});
+})();
+
+// Resize handler
+window.addEventListener('resize',()=>{
+  if(!isMobile()){
+    overlay.classList.remove('show');
+    document.body.style.overflow='';
+  }
+  const wrap=document.getElementById('mapw');
+  if(svg) d3.select('#mindmap').attr('width',wrap.clientWidth).attr('height',wrap.clientHeight);
+});
+
+/* ══════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('ld').classList.add('gone');
+    initMap();
+  },1500);
+});
 </script>
 </body>
 </html>
