@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Nivelamento, Gestão de Produtos e Marcas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -876,13 +876,17 @@ function initMap(){
   const wrap=document.getElementById('mapw');
   const W=wrap.clientWidth, H=wrap.clientHeight;
   const cx=W/2, cy=H/2;
-  const minDim=Math.min(W,H);
-  const radius=minDim/2*(W<500?0.70:0.80);
+  
+  // Garantir raio mínimo para que os nós nunca se aglomerem (mesmo no mobile)
+  const baseDim = Math.max(W, 800); 
+  const radius = baseDim / 2 * 0.82;
 
   svg=d3.select('#mindmap').attr('width',W).attr('height',H);
 
-  // Fundo transparente para capturar eventos de toque/arraste no mobile
-  svg.append('rect').attr('width', '100%').attr('height', '100%').attr('fill', 'transparent').attr('pointer-events', 'all');
+  // Fundo infinito opaco mas invisível para garantir captura firme de toque no iOS/Android
+  svg.append('rect')
+     .attr('width', '100%').attr('height', '100%')
+     .attr('fill', '#000000').attr('opacity', 0);
 
   const defs=svg.append('defs');
 
@@ -902,13 +906,23 @@ function initMap(){
 
   gMain=svg.append('g'); // No initial transform — zoom will set it
 
-  zoomBeh=d3.zoom().scaleExtent([.28,3.5]).on('zoom',(ev)=>{
+  // Calcular zoom out inicial para telas pequenas
+  const mapTotalSize = radius * 2 + 200; // Espaço do raio + largura dos cards
+  let initialScale = 1;
+  if(W < mapTotalSize || H < mapTotalSize) {
+    initialScale = Math.min(W / mapTotalSize, H / mapTotalSize) * 0.96; // 96% para não colar nas bordas
+  }
+  const minScale = Math.min(0.20, initialScale * 0.8);
+
+  zoomBeh=d3.zoom().scaleExtent([minScale,3.5]).on('zoom',(ev)=>{
     gMain.attr('transform', ev.transform);
   });
 
-  // Initialize centered — D3 now knows the true starting state
-  const initT=d3.zoomIdentity.translate(cx,cy);
-  svg.call(zoomBeh)
+  // Initialize centered and scaled
+  const initT=d3.zoomIdentity.translate(cx,cy).scale(initialScale);
+  window._mapInitT = initT; // Guardar estado inicial para o botão de reset
+
+  d3.select('#mapw').call(zoomBeh)
     .call(zoomBeh.transform, initT)
     .on('dblclick.zoom',null);
 
@@ -1324,12 +1338,10 @@ function buildLegend(){
     });
 }
 
-document.getElementById('zin').addEventListener('click',()=>svg.transition().duration(300).call(zoomBeh.scaleBy,1.35));
-document.getElementById('zout').addEventListener('click',()=>svg.transition().duration(300).call(zoomBeh.scaleBy,0.74));
+document.getElementById('zin').addEventListener('click',()=>d3.select('#mapw').transition().duration(300).call(zoomBeh.scaleBy,1.35));
+document.getElementById('zout').addEventListener('click',()=>d3.select('#mapw').transition().duration(300).call(zoomBeh.scaleBy,0.74));
 document.getElementById('zrst').addEventListener('click',()=>{
-  const wrap=document.getElementById('mapw');
-  const t=d3.zoomIdentity.translate(wrap.clientWidth/2,wrap.clientHeight/2);
-  svg.transition().duration(500).call(zoomBeh.transform,t);
+  if(window._mapInitT) d3.select('#mapw').transition().duration(500).call(zoomBeh.transform, window._mapInitT);
 });
 
 /* ══════════════════════════════════════════════════════
